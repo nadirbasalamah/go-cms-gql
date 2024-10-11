@@ -1,0 +1,68 @@
+scalar Time
+
+type Category {
+  id: ID!
+  title: String!
+  createdAt: Time!
+  updatedAt: Time
+}
+
+type Content {
+  id: ID!
+  title: String!
+  content: String!
+  author: User
+  category: Category
+  createdAt: Time!
+  updatedAt: Time
+}
+
+type User {
+  id: ID!
+  username: String!
+  email: String!
+  password: String!
+  createdAt: Time!
+  updatedAt: Time
+}
+
+type Query {
+  blogs: [Blog!]!
+  blog(id: ID!): Blog!
+}
+
+input NewUser {
+  username: String!
+  email: String!
+  password: String!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+input NewContent {
+  title: String!
+  content: String!
+  categoryId: ID!
+}
+
+input EditContent {
+  contentId: ID!
+  title: String!
+  content: String!
+  categoryId: ID!
+}
+
+input DeleteContent {
+  contentId: ID!
+}
+
+type Mutation {
+  register(input: NewUser!): String!
+  login(input: LoginInput!): String!
+  newContent(input: NewContent!): Content!
+  editContent(input: EditContent!): Content!
+  deleteContent(input: DeleteContent!): Boolean!
+}
