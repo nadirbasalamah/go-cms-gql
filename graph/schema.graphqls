@@ -29,6 +29,7 @@ type User {
 type Query {
   contents: [Content!]!
   content(id: ID!): Content!
+  user: User!
 }
 
 input NewUser {
@@ -60,7 +61,7 @@ input DeleteContent {
 }
 
 type Mutation {
-  register(input: NewUser!): String!
+  register(input: NewUser!): User!
   login(input: LoginInput!): String!
   newContent(input: NewContent!): Content!
   editContent(input: EditContent!): Content!

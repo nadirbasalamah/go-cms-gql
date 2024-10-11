@@ -27,11 +27,7 @@ func Connect(dbName string) error {
 	if err != nil {
 		panic(err)
 	}
-	defer func() {
-		if err = client.Disconnect(context.TODO()); err != nil {
-			panic(err)
-		}
-	}()
+
 	// Send a ping to confirm a successful connection
 	var result bson.M
 

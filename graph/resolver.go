@@ -1,7 +1,7 @@
 package graph
 
-// This file will not be regenerated automatically.
-//
-// It serves as dependency injection for your app, add any dependencies you require here.
+import "go-cms-gql/graph/services"
 
-type Resolver struct{}
+type Resolver struct {
+	userService services.UserService
+}

@@ -3,6 +3,7 @@ package main
 import (
 	"go-cms-gql/database"
 	"go-cms-gql/graph"
+	"go-cms-gql/graph/middlewares"
 	"go-cms-gql/utils"
 	"log"
 	"net/http"
@@ -10,9 +11,22 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/go-chi/chi/v5"
 )
 
 const defaultPort = "8080"
+
+func NewGraphQLHandler() *chi.Mux {
+	var router *chi.Mux = chi.NewRouter()
+	router.Use(middlewares.NewMiddleware())
+
+	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{}}))
+
+	router.Handle("/", playground.Handler("GraphQL playground", "/query"))
+	router.Handle("/query", srv)
+
+	return router
+}
 
 func main() {
 	port := os.Getenv("PORT")
@@ -25,11 +39,8 @@ func main() {
 		log.Fatalf("Cannot connect to the database: %v\n", err)
 	}
 
-	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{}}))
-
-	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
-	http.Handle("/query", srv)
+	var handler *chi.Mux = NewGraphQLHandler()
 
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+	log.Fatal(http.ListenAndServe(":"+port, handler))
 }

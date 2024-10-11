@@ -7,61 +7,61 @@ import (
 )
 
 type Category struct {
-	ID        string     `json:"id"`
-	Title     string     `json:"title"`
-	CreatedAt time.Time  `json:"createdAt"`
-	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
+	ID        string     `json:"id" bson:"_id,omitempty"`
+	Title     string     `json:"title" bson:"title"`
+	CreatedAt time.Time  `json:"createdAt" bson:"createdAt"`
+	UpdatedAt *time.Time `json:"updatedAt,omitempty" bson:"updatedAt"`
 }
 
 type Content struct {
-	ID        string     `json:"id"`
-	Title     string     `json:"title"`
-	Content   string     `json:"content"`
-	Author    *User      `json:"author,omitempty"`
-	Category  *Category  `json:"category,omitempty"`
-	CreatedAt time.Time  `json:"createdAt"`
-	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
+	ID        string     `json:"id" bson:"_id,omitempty"`
+	Title     string     `json:"title" bson:"title"`
+	Content   string     `json:"content" bson:"content"`
+	Author    *User      `json:"author,omitempty" bson:"author"`
+	Category  *Category  `json:"category,omitempty" bson:"category"`
+	CreatedAt time.Time  `json:"createdAt" bson:"createdAt"`
+	UpdatedAt *time.Time `json:"updatedAt,omitempty" bson:"updatedAt"`
 }
 
 type DeleteContent struct {
-	ContentID string `json:"contentId"`
+	ContentID string `json:"contentId" bson:"contentId"`
 }
 
 type EditContent struct {
-	ContentID  string `json:"contentId"`
-	Title      string `json:"title"`
-	Content    string `json:"content"`
-	CategoryID string `json:"categoryId"`
+	ContentID  string `json:"contentId" bson:"contentId"`
+	Title      string `json:"title" bson:"title"`
+	Content    string `json:"content" bson:"content"`
+	CategoryID string `json:"categoryId" bson:"categoryId"`
 }
 
 type LoginInput struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Email    string `json:"email" bson:"email"`
+	Password string `json:"password" bson:"password"`
 }
 
 type Mutation struct {
 }
 
 type NewContent struct {
-	Title      string `json:"title"`
-	Content    string `json:"content"`
-	CategoryID string `json:"categoryId"`
+	Title      string `json:"title" bson:"title"`
+	Content    string `json:"content" bson:"content"`
+	CategoryID string `json:"categoryId" bson:"categoryId"`
 }
 
 type NewUser struct {
-	Username string `json:"username"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Username string `json:"username" bson:"username"`
+	Email    string `json:"email" bson:"email"`
+	Password string `json:"password" bson:"password"`
 }
 
 type Query struct {
 }
 
 type User struct {
-	ID        string     `json:"id"`
-	Username  string     `json:"username"`
-	Email     string     `json:"email"`
-	Password  string     `json:"password"`
-	CreatedAt time.Time  `json:"createdAt"`
-	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
+	ID        string     `json:"id" bson:"_id,omitempty"`
+	Username  string     `json:"username" bson:"username"`
+	Email     string     `json:"email" bson:"email"`
+	Password  string     `json:"password" bson:"password"`
+	CreatedAt time.Time  `json:"createdAt" bson:"createdAt"`
+	UpdatedAt *time.Time `json:"updatedAt,omitempty" bson:"updatedAt"`
 }
