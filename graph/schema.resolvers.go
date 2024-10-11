@@ -10,14 +10,39 @@ import (
 	"go-cms-gql/graph/model"
 )
 
-// CreateTodo is the resolver for the createTodo field.
-func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
-	panic(fmt.Errorf("not implemented: CreateTodo - createTodo"))
+// Register is the resolver for the register field.
+func (r *mutationResolver) Register(ctx context.Context, input model.NewUser) (string, error) {
+	panic(fmt.Errorf("not implemented: Register - register"))
 }
 
-// Todos is the resolver for the todos field.
-func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
-	panic(fmt.Errorf("not implemented: Todos - todos"))
+// Login is the resolver for the login field.
+func (r *mutationResolver) Login(ctx context.Context, input model.LoginInput) (string, error) {
+	panic(fmt.Errorf("not implemented: Login - login"))
+}
+
+// NewContent is the resolver for the newContent field.
+func (r *mutationResolver) NewContent(ctx context.Context, input model.NewContent) (*model.Content, error) {
+	panic(fmt.Errorf("not implemented: NewContent - newContent"))
+}
+
+// EditContent is the resolver for the editContent field.
+func (r *mutationResolver) EditContent(ctx context.Context, input model.EditContent) (*model.Content, error) {
+	panic(fmt.Errorf("not implemented: EditContent - editContent"))
+}
+
+// DeleteContent is the resolver for the deleteContent field.
+func (r *mutationResolver) DeleteContent(ctx context.Context, input model.DeleteContent) (bool, error) {
+	panic(fmt.Errorf("not implemented: DeleteContent - deleteContent"))
+}
+
+// Contents is the resolver for the contents field.
+func (r *queryResolver) Contents(ctx context.Context) ([]*model.Content, error) {
+	panic(fmt.Errorf("not implemented: Contents - contents"))
+}
+
+// Content is the resolver for the content field.
+func (r *queryResolver) Content(ctx context.Context, id string) (*model.Content, error) {
+	panic(fmt.Errorf("not implemented: Content - content"))
 }
 
 // Mutation returns MutationResolver implementation.
@@ -28,3 +53,18 @@ func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
+
+// !!! WARNING !!!
+// The code below was going to be deleted when updating resolvers. It has been copied here so you have
+// one last chance to move it out of harms way if you want. There are two reasons this happens:
+//  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
+//    it when you're done.
+//  - You have helper methods in this file. Move them out to keep these resolver files clean.
+/*
+	func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
+	panic(fmt.Errorf("not implemented: CreateTodo - createTodo"))
+}
+func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
+	panic(fmt.Errorf("not implemented: Todos - todos"))
+}
+*/

@@ -2,25 +2,66 @@
 
 package model
 
+import (
+	"time"
+)
+
+type Category struct {
+	ID        string     `json:"id"`
+	Title     string     `json:"title"`
+	CreatedAt time.Time  `json:"createdAt"`
+	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
+}
+
+type Content struct {
+	ID        string     `json:"id"`
+	Title     string     `json:"title"`
+	Content   string     `json:"content"`
+	Author    *User      `json:"author,omitempty"`
+	Category  *Category  `json:"category,omitempty"`
+	CreatedAt time.Time  `json:"createdAt"`
+	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
+}
+
+type DeleteContent struct {
+	ContentID string `json:"contentId"`
+}
+
+type EditContent struct {
+	ContentID  string `json:"contentId"`
+	Title      string `json:"title"`
+	Content    string `json:"content"`
+	CategoryID string `json:"categoryId"`
+}
+
+type LoginInput struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
 type Mutation struct {
 }
 
-type NewTodo struct {
-	Text   string `json:"text"`
-	UserID string `json:"userId"`
+type NewContent struct {
+	Title      string `json:"title"`
+	Content    string `json:"content"`
+	CategoryID string `json:"categoryId"`
+}
+
+type NewUser struct {
+	Username string `json:"username"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
 type Query struct {
 }
 
-type Todo struct {
-	ID   string `json:"id"`
-	Text string `json:"text"`
-	Done bool   `json:"done"`
-	User *User  `json:"user"`
-}
-
 type User struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
+	ID        string     `json:"id"`
+	Username  string     `json:"username"`
+	Email     string     `json:"email"`
+	Password  string     `json:"password"`
+	CreatedAt time.Time  `json:"createdAt"`
+	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
 }

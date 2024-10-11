@@ -27,8 +27,8 @@ type User {
 }
 
 type Query {
-  blogs: [Blog!]!
-  blog(id: ID!): Blog!
+  contents: [Content!]!
+  content(id: ID!): Content!
 }
 
 input NewUser {

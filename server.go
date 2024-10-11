@@ -1,7 +1,9 @@
 package main
 
 import (
+	"go-cms-gql/database"
 	"go-cms-gql/graph"
+	"go-cms-gql/utils"
 	"log"
 	"net/http"
 	"os"
@@ -16,6 +18,11 @@ func main() {
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = defaultPort
+	}
+
+	err := database.Connect(utils.GetValue("DATABASE_NAME"))
+	if err != nil {
+		log.Fatalf("Cannot connect to the database: %v\n", err)
 	}
 
 	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{}}))
