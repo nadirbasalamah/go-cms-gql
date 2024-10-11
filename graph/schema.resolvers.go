@@ -31,6 +31,54 @@ func (r *mutationResolver) Login(ctx context.Context, input model.LoginInput) (s
 	return token, nil
 }
 
+// NewCategory is the resolver for the newCategory field.
+func (r *mutationResolver) NewCategory(ctx context.Context, input model.NewCategory) (*model.Category, error) {
+	user := middlewares.ForContext(ctx)
+	if user == nil {
+		return nil, errors.New("access denied")
+	}
+
+	category, err := r.categoryService.Create(input)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return category, nil
+}
+
+// EditCategory is the resolver for the editCategory field.
+func (r *mutationResolver) EditCategory(ctx context.Context, input model.EditCategory) (*model.Category, error) {
+	user := middlewares.ForContext(ctx)
+	if user == nil {
+		return nil, errors.New("access denied")
+	}
+
+	category, err := r.categoryService.Update(input)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return category, nil
+}
+
+// DeleteCategory is the resolver for the deleteCategory field.
+func (r *mutationResolver) DeleteCategory(ctx context.Context, input model.DeleteCategory) (bool, error) {
+	user := middlewares.ForContext(ctx)
+	if user == nil {
+		return false, errors.New("access denied")
+	}
+
+	result, err := r.categoryService.Delete(input)
+
+	if err != nil {
+		return result, err
+	}
+
+	return result, nil
+}
+
 // NewContent is the resolver for the newContent field.
 func (r *mutationResolver) NewContent(ctx context.Context, input model.NewContent) (*model.Content, error) {
 	panic(fmt.Errorf("not implemented: NewContent - newContent"))
@@ -56,6 +104,38 @@ func (r *queryResolver) User(ctx context.Context) (*model.User, error) {
 	return user, nil
 }
 
+// Categories is the resolver for the categories field.
+func (r *queryResolver) Categories(ctx context.Context) ([]*model.Category, error) {
+	user := middlewares.ForContext(ctx)
+	if user == nil {
+		return nil, errors.New("access denied")
+	}
+
+	categories, err := r.categoryService.GetAll()
+
+	if err != nil {
+		return nil, err
+	}
+
+	return categories, nil
+}
+
+// Content is the resolver for the content field.
+func (r *queryResolver) Category(ctx context.Context, id string) (*model.Category, error) {
+	user := middlewares.ForContext(ctx)
+	if user == nil {
+		return nil, errors.New("access denied")
+	}
+
+	category, err := r.categoryService.GetByID(id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return category, nil
+}
+
 // Contents is the resolver for the contents field.
 func (r *queryResolver) Contents(ctx context.Context) ([]*model.Content, error) {
 	panic(fmt.Errorf("not implemented: Contents - contents"))
@@ -69,6 +149,8 @@ func (r *queryResolver) Content(ctx context.Context, id string) (*model.Content,
 // Mutation returns MutationResolver implementation.
 func (r *Resolver) Mutation() MutationResolver {
 	r.userService = services.InitUserService()
+	r.categoryService = services.InitCategoryService()
+
 	return &mutationResolver{r}
 }
 

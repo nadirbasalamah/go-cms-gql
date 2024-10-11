@@ -3,5 +3,6 @@ package graph
 import "go-cms-gql/graph/services"
 
 type Resolver struct {
-	userService services.UserService
+	userService     services.UserService
+	categoryService services.CategoryService
 }

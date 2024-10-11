@@ -23,8 +23,17 @@ type Content struct {
 	UpdatedAt *time.Time `json:"updatedAt,omitempty" bson:"updatedAt"`
 }
 
+type DeleteCategory struct {
+	CategoryID string `json:"categoryId" bson:"categoryId"`
+}
+
 type DeleteContent struct {
 	ContentID string `json:"contentId" bson:"contentId"`
+}
+
+type EditCategory struct {
+	CategoryID string `json:"categoryId" bson:"categoryId"`
+	Title      string `json:"title" bson:"title"`
 }
 
 type EditContent struct {
@@ -40,6 +49,10 @@ type LoginInput struct {
 }
 
 type Mutation struct {
+}
+
+type NewCategory struct {
+	Title string `json:"title" bson:"title"`
 }
 
 type NewContent struct {

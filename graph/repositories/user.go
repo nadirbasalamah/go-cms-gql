@@ -16,7 +16,7 @@ import (
 type UserRepositoryImpl struct {
 }
 
-const collection = utils.USER_COLLECTION
+const userCollection = utils.USER_COLLECTION
 
 func InitUserRepository() UserRepository {
 	return &UserRepositoryImpl{}
@@ -37,7 +37,7 @@ func (ur *UserRepositoryImpl) Register(input model.NewUser) (*model.User, error)
 		CreatedAt: time.Now(),
 	}
 
-	var collection *mongo.Collection = database.GetCollection(collection)
+	var collection *mongo.Collection = database.GetCollection(userCollection)
 
 	res, err := collection.InsertOne(context.TODO(), newUser)
 
@@ -57,7 +57,7 @@ func (ur *UserRepositoryImpl) Register(input model.NewUser) (*model.User, error)
 }
 
 func (ur *UserRepositoryImpl) GetUserByEmail(input model.LoginInput) (*model.User, error) {
-	var collection *mongo.Collection = database.GetCollection(collection)
+	var collection *mongo.Collection = database.GetCollection(userCollection)
 
 	var user *model.User = &model.User{}
 	filter := bson.M{"email": input.Email}
@@ -82,7 +82,7 @@ func (ur *UserRepositoryImpl) GetUserInfo(userID string) (*model.User, error) {
 	}
 
 	var query primitive.D = bson.D{{Key: "_id", Value: uID}}
-	var collection *mongo.Collection = database.GetCollection(collection)
+	var collection *mongo.Collection = database.GetCollection(userCollection)
 
 	var userData *mongo.SingleResult = collection.FindOne(context.TODO(), query)
 

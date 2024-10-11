@@ -27,6 +27,8 @@ type User {
 }
 
 type Query {
+  categories: [Category!]!
+  category(id: ID!): Category!
   contents: [Content!]!
   content(id: ID!): Content!
   user: User!
@@ -41,6 +43,19 @@ input NewUser {
 input LoginInput {
   email: String!
   password: String!
+}
+
+input NewCategory {
+  title: String!
+}
+
+input EditCategory {
+  categoryId: ID!
+  title: String!
+}
+
+input DeleteCategory {
+  categoryId: ID!
 }
 
 input NewContent {
@@ -63,6 +78,9 @@ input DeleteContent {
 type Mutation {
   register(input: NewUser!): User!
   login(input: LoginInput!): String!
+  newCategory(input: NewCategory!): Category!
+  editCategory(input: EditCategory!): Category!
+  deleteCategory(input: DeleteCategory!): Boolean!
   newContent(input: NewContent!): Content!
   editContent(input: EditContent!): Content!
   deleteContent(input: DeleteContent!): Boolean!

@@ -1,6 +1,7 @@
 package utils
 
 const (
-	USER_COLLECTION    = "users"
-	CONTENT_COLLECTION = "contents"
+	USER_COLLECTION     = "users"
+	CATEGORY_COLLECTION = "categories"
+	CONTENT_COLLECTION  = "contents"
 )
