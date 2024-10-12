@@ -16,6 +16,10 @@ type CategoryRepository interface {
 	Delete(input model.DeleteCategory) (bool, error)
 }
 
-//TODO: implement content repository
 type ContentRepository interface {
+	GetAll() ([]*model.Content, error)
+	GetByID(contentID string) (*model.Content, error)
+	Create(input model.NewContent, user model.User) (*model.Content, error)
+	Update(input model.EditContent, user model.User) (*model.Content, error)
+	Delete(input model.DeleteContent, user model.User) (bool, error)
 }

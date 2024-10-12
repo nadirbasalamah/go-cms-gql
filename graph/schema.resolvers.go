@@ -3,7 +3,6 @@ package graph
 import (
 	"context"
 	"errors"
-	"fmt"
 	"go-cms-gql/graph/middlewares"
 	"go-cms-gql/graph/model"
 	"go-cms-gql/graph/services"
@@ -81,17 +80,50 @@ func (r *mutationResolver) DeleteCategory(ctx context.Context, input model.Delet
 
 // NewContent is the resolver for the newContent field.
 func (r *mutationResolver) NewContent(ctx context.Context, input model.NewContent) (*model.Content, error) {
-	panic(fmt.Errorf("not implemented: NewContent - newContent"))
+	user := middlewares.ForContext(ctx)
+	if user == nil {
+		return nil, errors.New("access denied")
+	}
+
+	content, err := r.contentService.Create(input, *user)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return content, nil
 }
 
 // EditContent is the resolver for the editContent field.
 func (r *mutationResolver) EditContent(ctx context.Context, input model.EditContent) (*model.Content, error) {
-	panic(fmt.Errorf("not implemented: EditContent - editContent"))
+	user := middlewares.ForContext(ctx)
+	if user == nil {
+		return nil, errors.New("access denied")
+	}
+
+	content, err := r.contentService.Update(input, *user)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return content, nil
 }
 
 // DeleteContent is the resolver for the deleteContent field.
 func (r *mutationResolver) DeleteContent(ctx context.Context, input model.DeleteContent) (bool, error) {
-	panic(fmt.Errorf("not implemented: DeleteContent - deleteContent"))
+	user := middlewares.ForContext(ctx)
+	if user == nil {
+		return false, errors.New("access denied")
+	}
+
+	result, err := r.contentService.Delete(input, *user)
+
+	if err != nil {
+		return result, err
+	}
+
+	return result, nil
 }
 
 // User is the resolver for the user field.
@@ -138,18 +170,41 @@ func (r *queryResolver) Category(ctx context.Context, id string) (*model.Categor
 
 // Contents is the resolver for the contents field.
 func (r *queryResolver) Contents(ctx context.Context) ([]*model.Content, error) {
-	panic(fmt.Errorf("not implemented: Contents - contents"))
+	user := middlewares.ForContext(ctx)
+	if user == nil {
+		return nil, errors.New("access denied")
+	}
+
+	contents, err := r.contentService.GetAll()
+
+	if err != nil {
+		return nil, err
+	}
+
+	return contents, nil
 }
 
 // Content is the resolver for the content field.
 func (r *queryResolver) Content(ctx context.Context, id string) (*model.Content, error) {
-	panic(fmt.Errorf("not implemented: Content - content"))
+	user := middlewares.ForContext(ctx)
+	if user == nil {
+		return nil, errors.New("access denied")
+	}
+
+	content, err := r.contentService.GetByID(id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return content, nil
 }
 
 // Mutation returns MutationResolver implementation.
 func (r *Resolver) Mutation() MutationResolver {
 	r.userService = services.InitUserService()
 	r.categoryService = services.InitCategoryService()
+	r.contentService = services.InitContentService()
 
 	return &mutationResolver{r}
 }

@@ -5,4 +5,5 @@ import "go-cms-gql/graph/services"
 type Resolver struct {
 	userService     services.UserService
 	categoryService services.CategoryService
+	contentService  services.ContentService
 }
