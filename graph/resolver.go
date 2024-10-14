@@ -7,3 +7,11 @@ type Resolver struct {
 	categoryService services.CategoryService
 	contentService  services.ContentService
 }
+
+func InitResolver() *Resolver {
+	return &Resolver{
+		userService:     services.InitUserService(),
+		categoryService: services.InitCategoryService(),
+		contentService:  services.InitContentService(),
+	}
+}

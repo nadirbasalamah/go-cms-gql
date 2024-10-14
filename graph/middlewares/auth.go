@@ -2,6 +2,7 @@ package middlewares
 
 import (
 	"context"
+	"errors"
 	"net/http"
 
 	"go-cms-gql/graph/model"
@@ -54,4 +55,12 @@ func NewMiddleware() func(http.Handler) http.Handler {
 func ForContext(ctx context.Context) *model.User {
 	raw, _ := ctx.Value(userCtxKey).(*model.User)
 	return raw
+}
+
+func GetAuthenticatedUser(ctx context.Context) (*model.User, error) {
+	user := ForContext(ctx)
+	if user == nil {
+		return nil, errors.New("access denied")
+	}
+	return user, nil
 }
