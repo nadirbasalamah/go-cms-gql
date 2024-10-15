@@ -64,3 +64,13 @@ func GetAuthenticatedUser(ctx context.Context) (*model.User, error) {
 	}
 	return user, nil
 }
+
+func CheckAdminRole(ctx context.Context) error {
+	user := ForContext(ctx)
+
+	if user == nil || user.Role != utils.ADMIN_ROLE {
+		return errors.New("access denied")
+	}
+
+	return nil
+}

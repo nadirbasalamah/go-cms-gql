@@ -5,3 +5,8 @@ const (
 	CATEGORY_COLLECTION = "categories"
 	CONTENT_COLLECTION  = "contents"
 )
+
+const (
+	USER_ROLE  = "user"
+	ADMIN_ROLE = "admin"
+)

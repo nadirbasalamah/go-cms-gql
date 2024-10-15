@@ -30,8 +30,7 @@ func (r *mutationResolver) Login(ctx context.Context, input model.LoginInput) (s
 
 // NewCategory is the resolver for the newCategory field.
 func (r *mutationResolver) NewCategory(ctx context.Context, input model.NewCategory) (*model.Category, error) {
-	_, err := middlewares.GetAuthenticatedUser(ctx)
-	if err != nil {
+	if err := middlewares.CheckAdminRole(ctx); err != nil {
 		return nil, errors.New("access denied")
 	}
 
@@ -40,8 +39,7 @@ func (r *mutationResolver) NewCategory(ctx context.Context, input model.NewCateg
 
 // EditCategory is the resolver for the editCategory field.
 func (r *mutationResolver) EditCategory(ctx context.Context, input model.EditCategory) (*model.Category, error) {
-	_, err := middlewares.GetAuthenticatedUser(ctx)
-	if err != nil {
+	if err := middlewares.CheckAdminRole(ctx); err != nil {
 		return nil, errors.New("access denied")
 	}
 
@@ -50,8 +48,7 @@ func (r *mutationResolver) EditCategory(ctx context.Context, input model.EditCat
 
 // DeleteCategory is the resolver for the deleteCategory field.
 func (r *mutationResolver) DeleteCategory(ctx context.Context, input model.DeleteCategory) (bool, error) {
-	_, err := middlewares.GetAuthenticatedUser(ctx)
-	if err != nil {
+	if err := middlewares.CheckAdminRole(ctx); err != nil {
 		return false, errors.New("access denied")
 	}
 

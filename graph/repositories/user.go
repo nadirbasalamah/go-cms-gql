@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"context"
+	"errors"
 	"go-cms-gql/database"
 	"go-cms-gql/graph/model"
 	"go-cms-gql/utils"
@@ -34,10 +35,23 @@ func (ur *UserRepositoryImpl) Register(input model.NewUser) (*model.User, error)
 		Username:  input.Username,
 		Email:     input.Email,
 		Password:  password,
+		Role:      utils.USER_ROLE,
 		CreatedAt: time.Now(),
 	}
 
+	//TODO: check if user is already exists by email
 	var collection *mongo.Collection = database.GetCollection(userCollection)
+
+	var foundUser *model.User = &model.User{}
+	userFilter := bson.M{"email": input.Email}
+
+	err = collection.FindOne(context.TODO(), userFilter).Decode(foundUser)
+
+	if err == nil {
+		return nil, errors.New("email already exists")
+	} else if err != mongo.ErrNoDocuments {
+		return nil, err
+	}
 
 	res, err := collection.InsertOne(context.TODO(), newUser)
 
