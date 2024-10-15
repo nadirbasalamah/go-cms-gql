@@ -79,7 +79,7 @@ func (cr *ContentRepositoryImpl) Create(input model.NewContent, user model.User)
 	var content model.Content = model.Content{
 		Title:     input.Title,
 		Content:   input.Content,
-		Author:    &user,
+		Author:    utils.ConvertToUserData(&user),
 		Category:  category,
 		CreatedAt: time.Now(),
 	}

@@ -11,7 +11,7 @@ type Content {
   id: ID!
   title: String!
   content: String!
-  author: User
+  author: UserData
   category: Category
   createdAt: Time!
   updatedAt: Time
@@ -26,12 +26,20 @@ type User {
   updatedAt: Time
 }
 
+type UserData {
+  id: ID!
+  username: String!
+  email: String!
+  createdAt: Time!
+  updatedAt: Time
+}
+
 type Query {
   categories: [Category!]!
   category(id: ID!): Category!
   contents: [Content!]!
   content(id: ID!): Content!
-  user: User!
+  user: UserData!
 }
 
 input NewUser {
@@ -76,7 +84,7 @@ input DeleteContent {
 }
 
 type Mutation {
-  register(input: NewUser!): User!
+  register(input: NewUser!): UserData!
   login(input: LoginInput!): String!
   newCategory(input: NewCategory!): Category!
   editCategory(input: EditCategory!): Category!

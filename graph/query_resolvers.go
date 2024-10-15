@@ -5,16 +5,17 @@ import (
 	"errors"
 	"go-cms-gql/graph/middlewares"
 	"go-cms-gql/graph/model"
+	"go-cms-gql/utils"
 )
 
 // User is the resolver for the user field.
-func (r *queryResolver) User(ctx context.Context) (*model.User, error) {
+func (r *queryResolver) User(ctx context.Context) (*model.UserData, error) {
 	user := middlewares.ForContext(ctx)
 	if user == nil {
 		return nil, errors.New("access denied")
 	}
 
-	return user, nil
+	return utils.ConvertToUserData(user), nil
 }
 
 // Categories is the resolver for the categories field.

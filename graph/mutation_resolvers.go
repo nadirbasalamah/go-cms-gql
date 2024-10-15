@@ -5,13 +5,20 @@ import (
 	"errors"
 	"go-cms-gql/graph/middlewares"
 	"go-cms-gql/graph/model"
+	"go-cms-gql/utils"
 )
 
 // User Resolvers
 
 // Register is the resolver for the register field.
-func (r *mutationResolver) Register(ctx context.Context, input model.NewUser) (*model.User, error) {
-	return r.userService.Register(input)
+func (r *mutationResolver) Register(ctx context.Context, input model.NewUser) (*model.UserData, error) {
+	user, err := r.userService.Register(input)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return utils.ConvertToUserData(user), nil
 }
 
 // Login is the resolver for the login field.

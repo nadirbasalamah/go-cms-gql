@@ -17,7 +17,7 @@ type Content struct {
 	ID        string     `json:"id" bson:"_id,omitempty"`
 	Title     string     `json:"title" bson:"title"`
 	Content   string     `json:"content" bson:"content"`
-	Author    *User      `json:"author,omitempty" bson:"author"`
+	Author    *UserData  `json:"author,omitempty" bson:"author"`
 	Category  *Category  `json:"category,omitempty" bson:"category"`
 	CreatedAt time.Time  `json:"createdAt" bson:"createdAt"`
 	UpdatedAt *time.Time `json:"updatedAt,omitempty" bson:"updatedAt"`
@@ -75,6 +75,14 @@ type User struct {
 	Username  string     `json:"username" bson:"username"`
 	Email     string     `json:"email" bson:"email"`
 	Password  string     `json:"password" bson:"password"`
+	CreatedAt time.Time  `json:"createdAt" bson:"createdAt"`
+	UpdatedAt *time.Time `json:"updatedAt,omitempty" bson:"updatedAt"`
+}
+
+type UserData struct {
+	ID        string     `json:"id" bson:"_id,omitempty"`
+	Username  string     `json:"username" bson:"username"`
+	Email     string     `json:"email" bson:"email"`
 	CreatedAt time.Time  `json:"createdAt" bson:"createdAt"`
 	UpdatedAt *time.Time `json:"updatedAt,omitempty" bson:"updatedAt"`
 }
