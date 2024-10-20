@@ -22,7 +22,15 @@ func NewGraphQLHandler() *chi.Mux {
 	router.Use(middleware.Logger)
 	router.Use(middlewares.NewMiddleware())
 
-	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: graph.InitResolver()}))
+	utils.InitValidator()
+
+	c := graph.Config{
+		Resolvers: graph.InitResolver(),
+	}
+
+	c.Directives.Validate = utils.ValidateRequest
+
+	srv := handler.NewDefaultServer(graph.NewExecutableSchema(c))
 
 	router.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	router.Handle("/query", srv)

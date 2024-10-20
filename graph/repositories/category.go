@@ -75,6 +75,17 @@ func (cr *CategoryRepositoryImpl) Create(input model.NewCategory) (*model.Catego
 
 	var collection *mongo.Collection = database.GetCollection(categoryCollection)
 
+	var foundCategory *model.Category = &model.Category{}
+	categoryFilter := bson.M{"title": input.Title}
+
+	err := collection.FindOne(context.TODO(), categoryFilter).Decode(foundCategory)
+
+	if err == nil {
+		return nil, errors.New("category already exists")
+	} else if err != mongo.ErrNoDocuments {
+		return nil, err
+	}
+
 	result, err := collection.InsertOne(context.TODO(), category)
 
 	if err != nil {

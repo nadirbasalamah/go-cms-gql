@@ -1,3 +1,5 @@
+directive @validate(rule: String!) on INPUT_FIELD_DEFINITION
+
 scalar Time
 
 type Category {
@@ -44,44 +46,45 @@ type Query {
 }
 
 input NewUser {
-  username: String!
-  email: String!
+  username: String! @validate(rule: "required,min=3,max=32")
+  email: String! @validate(rule: "required,email")
   password: String!
+    @validate(rule: "required,min=8,containsNumber,containsSpecialCharacter")
 }
 
 input LoginInput {
-  email: String!
-  password: String!
+  email: String! @validate(rule: "required,email")
+  password: String! @validate(rule: "required")
 }
 
 input NewCategory {
-  title: String!
+  title: String! @validate(rule: "required")
 }
 
 input EditCategory {
-  categoryId: ID!
-  title: String!
+  categoryId: ID! @validate(rule: "required")
+  title: String! @validate(rule: "required")
 }
 
 input DeleteCategory {
-  categoryId: ID!
+  categoryId: ID! @validate(rule: "required")
 }
 
 input NewContent {
-  title: String!
-  content: String!
-  categoryId: ID!
+  title: String! @validate(rule: "required")
+  content: String! @validate(rule: "required")
+  categoryId: ID! @validate(rule: "required")
 }
 
 input EditContent {
-  contentId: ID!
-  title: String!
-  content: String!
-  categoryId: ID!
+  contentId: ID! @validate(rule: "required")
+  title: String! @validate(rule: "required")
+  content: String! @validate(rule: "required")
+  categoryId: ID! @validate(rule: "required")
 }
 
 input DeleteContent {
-  contentId: ID!
+  contentId: ID! @validate(rule: "required")
 }
 
 type Mutation {

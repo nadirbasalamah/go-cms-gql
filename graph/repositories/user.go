@@ -39,7 +39,6 @@ func (ur *UserRepositoryImpl) Register(input model.NewUser) (*model.User, error)
 		CreatedAt: time.Now(),
 	}
 
-	//TODO: check if user is already exists by email
 	var collection *mongo.Collection = database.GetCollection(userCollection)
 
 	var foundUser *model.User = &model.User{}
