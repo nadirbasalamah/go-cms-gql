@@ -31,13 +31,13 @@ func (cr *CategoryRepositoryImpl) GetAll() ([]*model.Category, error) {
 
 	cursor, err := database.GetCollection(categoryCollection).Find(context.TODO(), query, findOptions)
 	if err != nil {
-		return nil, err
+		return nil, errors.New("error occurred when fetching categories")
 	}
 
 	var categories []*model.Category = make([]*model.Category, 0)
 
 	if err := cursor.All(context.TODO(), &categories); err != nil {
-		return nil, err
+		return nil, errors.New("error occurred when fetching categories")
 	}
 
 	return categories, nil
@@ -61,7 +61,7 @@ func (cr *CategoryRepositoryImpl) GetByID(categoryID string) (*model.Category, e
 	var category *model.Category = &model.Category{}
 
 	if err := categoryData.Decode(category); err != nil {
-		return nil, err
+		return nil, errors.New("error occurred when fetching category")
 	}
 
 	return category, nil
@@ -83,7 +83,7 @@ func (cr *CategoryRepositoryImpl) Create(input model.NewCategory) (*model.Catego
 	if err == nil {
 		return nil, errors.New("category already exists")
 	} else if err != mongo.ErrNoDocuments {
-		return nil, err
+		return nil, errors.New("error occurred when fetching document")
 	}
 
 	result, err := collection.InsertOne(context.TODO(), category)
@@ -98,7 +98,7 @@ func (cr *CategoryRepositoryImpl) Create(input model.NewCategory) (*model.Catego
 	var createdCategory *model.Category = &model.Category{}
 
 	if err := createdRecord.Decode(createdCategory); err != nil {
-		return nil, err
+		return nil, errors.New("error occurred when fetching created category")
 	}
 
 	return createdCategory, nil
@@ -140,7 +140,7 @@ func (cr *CategoryRepositoryImpl) Update(input model.EditCategory) (*model.Categ
 	var editedCategory *model.Category = &model.Category{}
 
 	if err := updateResult.Decode(editedCategory); err != nil {
-		return nil, err
+		return nil, errors.New("error occurred when fetching updated category")
 	}
 
 	return editedCategory, nil
@@ -149,7 +149,7 @@ func (cr *CategoryRepositoryImpl) Update(input model.EditCategory) (*model.Categ
 func (cr *CategoryRepositoryImpl) Delete(input model.DeleteCategory) (bool, error) {
 	cID, err := primitive.ObjectIDFromHex(input.CategoryID)
 	if err != nil {
-		return false, err
+		return false, errors.New("id is invalid")
 	}
 
 	var query primitive.D = bson.D{
@@ -162,7 +162,7 @@ func (cr *CategoryRepositoryImpl) Delete(input model.DeleteCategory) (bool, erro
 	var isFailed bool = err != nil || result.DeletedCount < 1
 
 	if isFailed {
-		return !isFailed, err
+		return !isFailed, errors.New("delete category failed")
 	}
 
 	return true, nil

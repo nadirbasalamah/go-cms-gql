@@ -1,11 +1,14 @@
 package repositories
 
-import "go-cms-gql/graph/model"
+import (
+	"context"
+	"go-cms-gql/graph/model"
+)
 
 type UserRepository interface {
-	Register(input model.NewUser) (*model.User, error)
-	GetUserByEmail(input model.LoginInput) (*model.User, error)
-	GetUserInfo(userID string) (*model.User, error)
+	Register(ctx context.Context, input model.NewUser) (*model.User, error)
+	GetUserByEmail(ctx context.Context, input model.LoginInput) (*model.User, error)
+	GetUserInfo(ctx context.Context, userID string) (*model.User, error)
 }
 
 type CategoryRepository interface {

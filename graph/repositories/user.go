@@ -23,10 +23,10 @@ func InitUserRepository() UserRepository {
 	return &UserRepositoryImpl{}
 }
 
-func (ur *UserRepositoryImpl) Register(input model.NewUser) (*model.User, error) {
+func (ur *UserRepositoryImpl) Register(ctx context.Context, input model.NewUser) (*model.User, error) {
 	bs, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
 	if err != nil {
-		return nil, err
+		return nil, errors.New("error occurred when creating password")
 	}
 
 	var password string = string(bs)
@@ -44,68 +44,68 @@ func (ur *UserRepositoryImpl) Register(input model.NewUser) (*model.User, error)
 	var foundUser *model.User = &model.User{}
 	userFilter := bson.M{"email": input.Email}
 
-	err = collection.FindOne(context.TODO(), userFilter).Decode(foundUser)
+	err = collection.FindOne(ctx, userFilter).Decode(foundUser)
 
 	if err == nil {
 		return nil, errors.New("email already exists")
 	} else if err != mongo.ErrNoDocuments {
-		return nil, err
+		return nil, errors.New("error occurred when fetching document")
 	}
 
-	res, err := collection.InsertOne(context.TODO(), newUser)
+	res, err := collection.InsertOne(ctx, newUser)
 
 	if err != nil {
-		return nil, err
+		return nil, errors.New("registration failed")
 	}
 
 	var user *model.User = &model.User{}
 	var filter primitive.D = bson.D{{Key: "_id", Value: res.InsertedID}}
 
-	var userRecord *mongo.SingleResult = collection.FindOne(context.TODO(), filter)
+	var userRecord *mongo.SingleResult = collection.FindOne(ctx, filter)
 	if err := userRecord.Decode(user); err != nil {
-		return nil, err
+		return nil, errors.New("error occurred when fetching user")
 	}
 
 	return user, nil
 }
 
-func (ur *UserRepositoryImpl) GetUserByEmail(input model.LoginInput) (*model.User, error) {
+func (ur *UserRepositoryImpl) GetUserByEmail(ctx context.Context, input model.LoginInput) (*model.User, error) {
 	var collection *mongo.Collection = database.GetCollection(userCollection)
 
 	var user *model.User = &model.User{}
 	filter := bson.M{"email": input.Email}
 
-	var res *mongo.SingleResult = collection.FindOne(context.TODO(), filter)
+	var res *mongo.SingleResult = collection.FindOne(ctx, filter)
 	if err := res.Decode(user); err != nil {
-		return nil, err
+		return nil, errors.New("user not found")
 	}
 
 	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.Password))
 	if err != nil {
-		return nil, err
+		return nil, errors.New("invalid credentials")
 	}
 
 	return user, nil
 }
 
-func (ur *UserRepositoryImpl) GetUserInfo(userID string) (*model.User, error) {
+func (ur *UserRepositoryImpl) GetUserInfo(ctx context.Context, userID string) (*model.User, error) {
 	uID, err := primitive.ObjectIDFromHex(userID)
 	if err != nil {
-		return nil, err
+		return nil, errors.New("id is invalid")
 	}
 
 	var query primitive.D = bson.D{{Key: "_id", Value: uID}}
 	var collection *mongo.Collection = database.GetCollection(userCollection)
 
-	var userData *mongo.SingleResult = collection.FindOne(context.TODO(), query)
+	var userData *mongo.SingleResult = collection.FindOne(ctx, query)
 
 	if userData.Err() != nil {
-		return nil, err
+		return nil, errors.New("user not found")
 	}
 
 	var user *model.User = &model.User{}
 	if err := userData.Decode(user); err != nil {
-		return nil, err
+		return nil, errors.New("user not found")
 	}
 
 	return user, nil

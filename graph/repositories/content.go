@@ -34,13 +34,13 @@ func (cr *ContentRepositoryImpl) GetAll() ([]*model.Content, error) {
 
 	cursor, err := database.GetCollection(contentCollection).Find(context.TODO(), query, findOptions)
 	if err != nil {
-		return nil, err
+		return nil, errors.New("error occurred when fetching contents")
 	}
 
 	var contents []*model.Content = make([]*model.Content, 0)
 
 	if err := cursor.All(context.TODO(), &contents); err != nil {
-		return nil, err
+		return nil, errors.New("error occurred when fetching contents")
 	}
 
 	return contents, nil
@@ -63,7 +63,7 @@ func (cr *ContentRepositoryImpl) GetByID(contentID string) (*model.Content, erro
 	var content *model.Content = &model.Content{}
 
 	if err := contentData.Decode(content); err != nil {
-		return nil, err
+		return nil, errors.New("error occurred when fetching content")
 	}
 
 	return content, nil
@@ -98,7 +98,7 @@ func (cr *ContentRepositoryImpl) Create(input model.NewContent, user model.User)
 	var createdContent *model.Content = &model.Content{}
 
 	if err := createdRecord.Decode(createdContent); err != nil {
-		return nil, err
+		return nil, errors.New("error occurred when fetching created content")
 	}
 
 	return createdContent, nil
@@ -149,7 +149,7 @@ func (cr *ContentRepositoryImpl) Update(input model.EditContent, user model.User
 	var editedContent *model.Content = &model.Content{}
 
 	if err := updateResult.Decode(editedContent); err != nil {
-		return nil, err
+		return nil, errors.New("error occurred when fetching updated content")
 	}
 
 	return editedContent, nil
@@ -159,7 +159,7 @@ func (cr *ContentRepositoryImpl) Update(input model.EditContent, user model.User
 func (cr *ContentRepositoryImpl) Delete(input model.DeleteContent, user model.User) (bool, error) {
 	cID, err := primitive.ObjectIDFromHex(input.ContentID)
 	if err != nil {
-		return false, err
+		return false, errors.New("id is invalid")
 	}
 
 	var query primitive.D = bson.D{
@@ -173,7 +173,7 @@ func (cr *ContentRepositoryImpl) Delete(input model.DeleteContent, user model.Us
 	var isFailed bool = err != nil || result.DeletedCount < 1
 
 	if isFailed {
-		return !isFailed, err
+		return !isFailed, errors.New("delete content failed")
 	}
 
 	return true, nil
