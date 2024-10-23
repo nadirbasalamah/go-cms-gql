@@ -10,9 +10,9 @@ type CategoryServiceImpl struct {
 	repository repositories.CategoryRepository
 }
 
-func InitCategoryService() CategoryService {
+func InitCategoryService(categoryRepository repositories.CategoryRepository) CategoryService {
 	return &CategoryServiceImpl{
-		repository: repositories.InitCategoryRepository(),
+		repository: categoryRepository,
 	}
 }
 

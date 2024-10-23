@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"go-cms-gql/graph/model"
+	"go-cms-gql/graph/repositories"
 	"go-cms-gql/graph/services"
 	"go-cms-gql/utils"
 )
@@ -33,7 +34,7 @@ func NewMiddleware() func(http.Handler) http.Handler {
 				return
 			}
 
-			var userService services.UserService = services.InitUserService()
+			var userService services.UserService = services.InitUserService(repositories.InitUserRepository())
 
 			userData, err := userService.GetUserInfo(r.Context(), tokenData.UserId)
 

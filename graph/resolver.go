@@ -1,6 +1,9 @@
 package graph
 
-import "go-cms-gql/graph/services"
+import (
+	"go-cms-gql/graph/repositories"
+	"go-cms-gql/graph/services"
+)
 
 type Resolver struct {
 	userService     services.UserService
@@ -10,8 +13,8 @@ type Resolver struct {
 
 func InitResolver() *Resolver {
 	return &Resolver{
-		userService:     services.InitUserService(),
-		categoryService: services.InitCategoryService(),
-		contentService:  services.InitContentService(),
+		userService:     services.InitUserService(repositories.InitUserRepository()),
+		categoryService: services.InitCategoryService(repositories.InitCategoryRepository()),
+		contentService:  services.InitContentService(repositories.InitContentRepository()),
 	}
 }

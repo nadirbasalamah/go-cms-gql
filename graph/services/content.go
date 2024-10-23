@@ -10,9 +10,9 @@ type ContentServiceImpl struct {
 	repository repositories.ContentRepository
 }
 
-func InitContentService() ContentService {
+func InitContentService(contentRepository repositories.ContentRepository) ContentService {
 	return &ContentServiceImpl{
-		repository: repositories.InitContentRepository(),
+		repository: contentRepository,
 	}
 }
 
