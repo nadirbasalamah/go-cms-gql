@@ -78,11 +78,12 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Categories func(childComplexity int) int
-		Category   func(childComplexity int, id string) int
-		Content    func(childComplexity int, id string) int
-		Contents   func(childComplexity int) int
-		User       func(childComplexity int) int
+		Categories         func(childComplexity int) int
+		Category           func(childComplexity int, id string) int
+		Content            func(childComplexity int, id string) int
+		Contents           func(childComplexity int, keyword *string) int
+		ContentsByCategory func(childComplexity int, categoryID string) int
+		User               func(childComplexity int) int
 	}
 
 	User struct {
@@ -117,7 +118,8 @@ type MutationResolver interface {
 type QueryResolver interface {
 	Categories(ctx context.Context) ([]*model.Category, error)
 	Category(ctx context.Context, id string) (*model.Category, error)
-	Contents(ctx context.Context) ([]*model.Content, error)
+	Contents(ctx context.Context, keyword *string) ([]*model.Content, error)
+	ContentsByCategory(ctx context.Context, categoryID string) ([]*model.Content, error)
 	Content(ctx context.Context, id string) (*model.Content, error)
 	User(ctx context.Context) (*model.UserData, error)
 }
@@ -350,7 +352,24 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		return e.complexity.Query.Contents(childComplexity), true
+		args, err := ec.field_Query_contents_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Contents(childComplexity, args["keyword"].(*string)), true
+
+	case "Query.contentsByCategory":
+		if e.complexity.Query.ContentsByCategory == nil {
+			break
+		}
+
+		args, err := ec.field_Query_contentsByCategory_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.ContentsByCategory(childComplexity, args["categoryID"].(string)), true
 
 	case "Query.user":
 		if e.complexity.Query.User == nil {
@@ -857,6 +876,52 @@ func (ec *executionContext) field_Query_content_argsID(
 	}
 
 	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_contentsByCategory_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	arg0, err := ec.field_Query_contentsByCategory_argsCategoryID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["categoryID"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Query_contentsByCategory_argsCategoryID(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("categoryID"))
+	if tmp, ok := rawArgs["categoryID"]; ok {
+		return ec.unmarshalNID2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_contents_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	arg0, err := ec.field_Query_contents_argsKeyword(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["keyword"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Query_contents_argsKeyword(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("keyword"))
+	if tmp, ok := rawArgs["keyword"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
 	return zeroVal, nil
 }
 
@@ -2045,7 +2110,7 @@ func (ec *executionContext) _Query_contents(ctx context.Context, field graphql.C
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Contents(rctx)
+		return ec.resolvers.Query().Contents(rctx, fc.Args["keyword"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2062,7 +2127,7 @@ func (ec *executionContext) _Query_contents(ctx context.Context, field graphql.C
 	return ec.marshalNContent2ᚕᚖgoᚑcmsᚑgqlᚋgraphᚋmodelᚐContentᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_contents(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_contents(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -2087,6 +2152,88 @@ func (ec *executionContext) fieldContext_Query_contents(_ context.Context, field
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Content", field.Name)
 		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_contents_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_contentsByCategory(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_contentsByCategory(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().ContentsByCategory(rctx, fc.Args["categoryID"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Content)
+	fc.Result = res
+	return ec.marshalNContent2ᚕᚖgoᚑcmsᚑgqlᚋgraphᚋmodelᚐContentᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_contentsByCategory(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Content_id(ctx, field)
+			case "title":
+				return ec.fieldContext_Content_title(ctx, field)
+			case "content":
+				return ec.fieldContext_Content_content(ctx, field)
+			case "author":
+				return ec.fieldContext_Content_author(ctx, field)
+			case "category":
+				return ec.fieldContext_Content_category(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Content_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Content_updatedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Content", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_contentsByCategory_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
 	}
 	return fc, nil
 }
@@ -5551,6 +5698,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_contents(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "contentsByCategory":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_contentsByCategory(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}

@@ -26,8 +26,17 @@ func InitContentRepository() ContentRepository {
 	}
 }
 
-func (cr *ContentRepositoryImpl) GetAll(ctx context.Context) ([]*model.Content, error) {
+func (cr *ContentRepositoryImpl) GetAll(ctx context.Context, keyword string) ([]*model.Content, error) {
 	var query primitive.D = bson.D{{}}
+
+	if keyword != "" {
+		query = bson.D{
+			{Key: "$or", Value: bson.A{
+				bson.D{{Key: "title", Value: primitive.Regex{Pattern: keyword, Options: "i"}}},
+				bson.D{{Key: "description", Value: primitive.Regex{Pattern: keyword, Options: "i"}}},
+			}},
+		}
+	}
 
 	var findOptions *options.FindOptions = options.Find()
 	findOptions.SetSort(bson.D{{Key: "createdAt", Value: -1}})
@@ -45,6 +54,7 @@ func (cr *ContentRepositoryImpl) GetAll(ctx context.Context) ([]*model.Content, 
 
 	return contents, nil
 }
+
 func (cr *ContentRepositoryImpl) GetByID(ctx context.Context, contentID string) (*model.Content, error) {
 	cID, err := primitive.ObjectIDFromHex(contentID)
 	if err != nil {
@@ -67,6 +77,31 @@ func (cr *ContentRepositoryImpl) GetByID(ctx context.Context, contentID string) 
 	}
 
 	return content, nil
+}
+
+func (cr *ContentRepositoryImpl) GetByCategoryID(ctx context.Context, categoryID string) ([]*model.Content, error) {
+	_, err := primitive.ObjectIDFromHex(categoryID)
+	if err != nil {
+		return nil, errors.New("id is invalid")
+	}
+
+	var query primitive.D = bson.D{{Key: "category._id", Value: categoryID}}
+
+	var findOptions *options.FindOptions = options.Find()
+	findOptions.SetSort(bson.D{{Key: "createdAt", Value: -1}})
+
+	cursor, err := database.GetCollection(contentCollection).Find(ctx, query, findOptions)
+	if err != nil {
+		return nil, errors.New("error occurred when fetching contents")
+	}
+
+	var contents []*model.Content = make([]*model.Content, 0)
+
+	if err := cursor.All(ctx, &contents); err != nil {
+		return nil, errors.New("error occurred when fetching contents")
+	}
+
+	return contents, nil
 }
 
 func (cr *ContentRepositoryImpl) Create(ctx context.Context, input model.NewContent, user model.User) (*model.Content, error) {

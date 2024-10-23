@@ -40,7 +40,8 @@ type UserData {
 type Query {
   categories: [Category!]!
   category(id: ID!): Category!
-  contents: [Content!]!
+  contents(keyword: String): [Content!]!
+  contentsByCategory(categoryID: ID!): [Content!]!
   content(id: ID!): Content!
   user: UserData!
 }

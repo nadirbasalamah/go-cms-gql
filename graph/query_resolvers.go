@@ -51,13 +51,19 @@ func (r *queryResolver) Category(ctx context.Context, id string) (*model.Categor
 }
 
 // Contents is the resolver for the contents field.
-func (r *queryResolver) Contents(ctx context.Context) ([]*model.Content, error) {
+func (r *queryResolver) Contents(ctx context.Context, keyword *string) ([]*model.Content, error) {
 	user := middlewares.ForContext(ctx)
 	if user == nil {
 		return nil, errors.New("access denied")
 	}
 
-	contents, err := r.contentService.GetAll(ctx)
+	var actualKeyword string
+
+	if keyword != nil {
+		actualKeyword = *keyword
+	}
+
+	contents, err := r.contentService.GetAll(ctx, actualKeyword)
 
 	if err != nil {
 		return nil, err
@@ -80,4 +86,20 @@ func (r *queryResolver) Content(ctx context.Context, id string) (*model.Content,
 	}
 
 	return content, nil
+}
+
+// ContentsByCategory is the resolver for the contentsByCategory field.
+func (r *queryResolver) ContentsByCategory(ctx context.Context, categoryID string) ([]*model.Content, error) {
+	user := middlewares.ForContext(ctx)
+	if user == nil {
+		return nil, errors.New("access denied")
+	}
+
+	contents, err := r.contentService.GetByCategoryID(ctx, categoryID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return contents, nil
 }
