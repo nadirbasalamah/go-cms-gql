@@ -23,27 +23,27 @@ func InitCategoryRepository() CategoryRepository {
 	return &CategoryRepositoryImpl{}
 }
 
-func (cr *CategoryRepositoryImpl) GetAll() ([]*model.Category, error) {
+func (cr *CategoryRepositoryImpl) GetAll(ctx context.Context) ([]*model.Category, error) {
 	var query primitive.D = bson.D{{}}
 
 	var findOptions *options.FindOptions = options.Find()
 	findOptions.SetSort(bson.D{{Key: "createdAt", Value: -1}})
 
-	cursor, err := database.GetCollection(categoryCollection).Find(context.TODO(), query, findOptions)
+	cursor, err := database.GetCollection(categoryCollection).Find(ctx, query, findOptions)
 	if err != nil {
 		return nil, errors.New("error occurred when fetching categories")
 	}
 
 	var categories []*model.Category = make([]*model.Category, 0)
 
-	if err := cursor.All(context.TODO(), &categories); err != nil {
+	if err := cursor.All(ctx, &categories); err != nil {
 		return nil, errors.New("error occurred when fetching categories")
 	}
 
 	return categories, nil
 }
 
-func (cr *CategoryRepositoryImpl) GetByID(categoryID string) (*model.Category, error) {
+func (cr *CategoryRepositoryImpl) GetByID(ctx context.Context, categoryID string) (*model.Category, error) {
 	cID, err := primitive.ObjectIDFromHex(categoryID)
 	if err != nil {
 		return nil, errors.New("id is invalid")
@@ -52,7 +52,7 @@ func (cr *CategoryRepositoryImpl) GetByID(categoryID string) (*model.Category, e
 	var query primitive.D = bson.D{{Key: "_id", Value: cID}}
 	var collection *mongo.Collection = database.GetCollection(categoryCollection)
 
-	var categoryData *mongo.SingleResult = collection.FindOne(context.TODO(), query)
+	var categoryData *mongo.SingleResult = collection.FindOne(ctx, query)
 
 	if categoryData.Err() != nil {
 		return nil, errors.New("category not found")
@@ -67,7 +67,7 @@ func (cr *CategoryRepositoryImpl) GetByID(categoryID string) (*model.Category, e
 	return category, nil
 }
 
-func (cr *CategoryRepositoryImpl) Create(input model.NewCategory) (*model.Category, error) {
+func (cr *CategoryRepositoryImpl) Create(ctx context.Context, input model.NewCategory) (*model.Category, error) {
 	var category model.Category = model.Category{
 		Title:     input.Title,
 		CreatedAt: time.Now(),
@@ -78,7 +78,7 @@ func (cr *CategoryRepositoryImpl) Create(input model.NewCategory) (*model.Catego
 	var foundCategory *model.Category = &model.Category{}
 	categoryFilter := bson.M{"title": input.Title}
 
-	err := collection.FindOne(context.TODO(), categoryFilter).Decode(foundCategory)
+	err := collection.FindOne(ctx, categoryFilter).Decode(foundCategory)
 
 	if err == nil {
 		return nil, errors.New("category already exists")
@@ -86,14 +86,14 @@ func (cr *CategoryRepositoryImpl) Create(input model.NewCategory) (*model.Catego
 		return nil, errors.New("error occurred when fetching document")
 	}
 
-	result, err := collection.InsertOne(context.TODO(), category)
+	result, err := collection.InsertOne(ctx, category)
 
 	if err != nil {
 		return nil, errors.New("create category failed")
 	}
 
 	var filter primitive.D = bson.D{{Key: "_id", Value: result.InsertedID}}
-	var createdRecord *mongo.SingleResult = collection.FindOne(context.TODO(), filter)
+	var createdRecord *mongo.SingleResult = collection.FindOne(ctx, filter)
 
 	var createdCategory *model.Category = &model.Category{}
 
@@ -104,7 +104,7 @@ func (cr *CategoryRepositoryImpl) Create(input model.NewCategory) (*model.Catego
 	return createdCategory, nil
 }
 
-func (cr *CategoryRepositoryImpl) Update(input model.EditCategory) (*model.Category, error) {
+func (cr *CategoryRepositoryImpl) Update(ctx context.Context, input model.EditCategory) (*model.Category, error) {
 	cID, err := primitive.ObjectIDFromHex(input.CategoryID)
 	if err != nil {
 		return nil, errors.New("id is invalid")
@@ -124,7 +124,7 @@ func (cr *CategoryRepositoryImpl) Update(input model.EditCategory) (*model.Categ
 	var collection *mongo.Collection = database.GetCollection(categoryCollection)
 
 	var updateResult *mongo.SingleResult = collection.FindOneAndUpdate(
-		context.TODO(),
+		ctx,
 		query,
 		update,
 		options.FindOneAndUpdate().SetReturnDocument(options.After),
@@ -146,7 +146,7 @@ func (cr *CategoryRepositoryImpl) Update(input model.EditCategory) (*model.Categ
 	return editedCategory, nil
 }
 
-func (cr *CategoryRepositoryImpl) Delete(input model.DeleteCategory) (bool, error) {
+func (cr *CategoryRepositoryImpl) Delete(ctx context.Context, input model.DeleteCategory) (bool, error) {
 	cID, err := primitive.ObjectIDFromHex(input.CategoryID)
 	if err != nil {
 		return false, errors.New("id is invalid")
@@ -158,7 +158,7 @@ func (cr *CategoryRepositoryImpl) Delete(input model.DeleteCategory) (bool, erro
 
 	var collection *mongo.Collection = database.GetCollection(categoryCollection)
 
-	result, err := collection.DeleteOne(context.TODO(), query)
+	result, err := collection.DeleteOne(ctx, query)
 	var isFailed bool = err != nil || result.DeletedCount < 1
 
 	if isFailed {

@@ -12,17 +12,17 @@ type UserRepository interface {
 }
 
 type CategoryRepository interface {
-	GetAll() ([]*model.Category, error)
-	GetByID(categoryID string) (*model.Category, error)
-	Create(input model.NewCategory) (*model.Category, error)
-	Update(input model.EditCategory) (*model.Category, error)
-	Delete(input model.DeleteCategory) (bool, error)
+	GetAll(ctx context.Context) ([]*model.Category, error)
+	GetByID(ctx context.Context, categoryID string) (*model.Category, error)
+	Create(ctx context.Context, input model.NewCategory) (*model.Category, error)
+	Update(ctx context.Context, input model.EditCategory) (*model.Category, error)
+	Delete(ctx context.Context, input model.DeleteCategory) (bool, error)
 }
 
 type ContentRepository interface {
-	GetAll() ([]*model.Content, error)
-	GetByID(contentID string) (*model.Content, error)
-	Create(input model.NewContent, user model.User) (*model.Content, error)
-	Update(input model.EditContent, user model.User) (*model.Content, error)
-	Delete(input model.DeleteContent, user model.User) (bool, error)
+	GetAll(ctx context.Context) ([]*model.Content, error)
+	GetByID(ctx context.Context, contentID string) (*model.Content, error)
+	Create(ctx context.Context, input model.NewContent, user model.User) (*model.Content, error)
+	Update(ctx context.Context, input model.EditContent, user model.User) (*model.Content, error)
+	Delete(ctx context.Context, input model.DeleteContent, user model.User) (bool, error)
 }

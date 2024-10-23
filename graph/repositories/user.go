@@ -77,12 +77,12 @@ func (ur *UserRepositoryImpl) GetUserByEmail(ctx context.Context, input model.Lo
 
 	var res *mongo.SingleResult = collection.FindOne(ctx, filter)
 	if err := res.Decode(user); err != nil {
-		return nil, errors.New("user not found")
+		return nil, errors.New("invalid email")
 	}
 
 	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.Password))
 	if err != nil {
-		return nil, errors.New("invalid credentials")
+		return nil, errors.New("invalid password")
 	}
 
 	return user, nil

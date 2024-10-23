@@ -25,7 +25,7 @@ func (r *queryResolver) Categories(ctx context.Context) ([]*model.Category, erro
 		return nil, errors.New("access denied")
 	}
 
-	categories, err := r.categoryService.GetAll()
+	categories, err := r.categoryService.GetAll(ctx)
 
 	if err != nil {
 		return nil, err
@@ -41,7 +41,7 @@ func (r *queryResolver) Category(ctx context.Context, id string) (*model.Categor
 		return nil, errors.New("access denied")
 	}
 
-	category, err := r.categoryService.GetByID(id)
+	category, err := r.categoryService.GetByID(ctx, id)
 
 	if err != nil {
 		return nil, err
@@ -57,7 +57,7 @@ func (r *queryResolver) Contents(ctx context.Context) ([]*model.Content, error) 
 		return nil, errors.New("access denied")
 	}
 
-	contents, err := r.contentService.GetAll()
+	contents, err := r.contentService.GetAll(ctx)
 
 	if err != nil {
 		return nil, err
@@ -73,7 +73,7 @@ func (r *queryResolver) Content(ctx context.Context, id string) (*model.Content,
 		return nil, errors.New("access denied")
 	}
 
-	content, err := r.contentService.GetByID(id)
+	content, err := r.contentService.GetByID(ctx, id)
 
 	if err != nil {
 		return nil, err

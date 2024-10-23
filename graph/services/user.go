@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"go-cms-gql/graph/model"
 	"go-cms-gql/graph/repositories"
 	"go-cms-gql/utils"
@@ -16,12 +17,12 @@ func InitUserService() UserService {
 	}
 }
 
-func (us *UserServiceImpl) Register(input model.NewUser) (*model.User, error) {
-	return us.repository.Register(input)
+func (us *UserServiceImpl) Register(ctx context.Context, input model.NewUser) (*model.User, error) {
+	return us.repository.Register(ctx, input)
 }
 
-func (us *UserServiceImpl) Login(input model.LoginInput) (string, error) {
-	user, err := us.repository.GetUserByEmail(input)
+func (us *UserServiceImpl) Login(ctx context.Context, input model.LoginInput) (string, error) {
+	user, err := us.repository.GetUserByEmail(ctx, input)
 
 	if err != nil {
 		return "", err
@@ -37,6 +38,6 @@ func (us *UserServiceImpl) Login(input model.LoginInput) (string, error) {
 
 }
 
-func (us *UserServiceImpl) GetUserInfo(userID string) (*model.User, error) {
-	return us.repository.GetUserInfo(userID)
+func (us *UserServiceImpl) GetUserInfo(ctx context.Context, userID string) (*model.User, error) {
+	return us.repository.GetUserInfo(ctx, userID)
 }

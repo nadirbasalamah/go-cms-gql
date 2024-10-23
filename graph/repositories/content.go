@@ -26,26 +26,26 @@ func InitContentRepository() ContentRepository {
 	}
 }
 
-func (cr *ContentRepositoryImpl) GetAll() ([]*model.Content, error) {
+func (cr *ContentRepositoryImpl) GetAll(ctx context.Context) ([]*model.Content, error) {
 	var query primitive.D = bson.D{{}}
 
 	var findOptions *options.FindOptions = options.Find()
 	findOptions.SetSort(bson.D{{Key: "createdAt", Value: -1}})
 
-	cursor, err := database.GetCollection(contentCollection).Find(context.TODO(), query, findOptions)
+	cursor, err := database.GetCollection(contentCollection).Find(ctx, query, findOptions)
 	if err != nil {
 		return nil, errors.New("error occurred when fetching contents")
 	}
 
 	var contents []*model.Content = make([]*model.Content, 0)
 
-	if err := cursor.All(context.TODO(), &contents); err != nil {
+	if err := cursor.All(ctx, &contents); err != nil {
 		return nil, errors.New("error occurred when fetching contents")
 	}
 
 	return contents, nil
 }
-func (cr *ContentRepositoryImpl) GetByID(contentID string) (*model.Content, error) {
+func (cr *ContentRepositoryImpl) GetByID(ctx context.Context, contentID string) (*model.Content, error) {
 	cID, err := primitive.ObjectIDFromHex(contentID)
 	if err != nil {
 		return nil, errors.New("id is invalid")
@@ -54,7 +54,7 @@ func (cr *ContentRepositoryImpl) GetByID(contentID string) (*model.Content, erro
 	var query primitive.D = bson.D{{Key: "_id", Value: cID}}
 	var collection *mongo.Collection = database.GetCollection(contentCollection)
 
-	var contentData *mongo.SingleResult = collection.FindOne(context.TODO(), query)
+	var contentData *mongo.SingleResult = collection.FindOne(ctx, query)
 
 	if contentData.Err() != nil {
 		return nil, errors.New("content not found")
@@ -69,8 +69,8 @@ func (cr *ContentRepositoryImpl) GetByID(contentID string) (*model.Content, erro
 	return content, nil
 }
 
-func (cr *ContentRepositoryImpl) Create(input model.NewContent, user model.User) (*model.Content, error) {
-	category, err := cr.categoryRepo.GetByID(input.CategoryID)
+func (cr *ContentRepositoryImpl) Create(ctx context.Context, input model.NewContent, user model.User) (*model.Content, error) {
+	category, err := cr.categoryRepo.GetByID(ctx, input.CategoryID)
 
 	if err != nil {
 		return nil, errors.New("create content failed, category not found")
@@ -86,14 +86,14 @@ func (cr *ContentRepositoryImpl) Create(input model.NewContent, user model.User)
 
 	var collection *mongo.Collection = database.GetCollection(contentCollection)
 
-	result, err := collection.InsertOne(context.TODO(), content)
+	result, err := collection.InsertOne(ctx, content)
 
 	if err != nil {
 		return nil, errors.New("create content failed")
 	}
 
 	var filter primitive.D = bson.D{{Key: "_id", Value: result.InsertedID}}
-	var createdRecord *mongo.SingleResult = collection.FindOne(context.TODO(), filter)
+	var createdRecord *mongo.SingleResult = collection.FindOne(ctx, filter)
 
 	var createdContent *model.Content = &model.Content{}
 
@@ -104,8 +104,8 @@ func (cr *ContentRepositoryImpl) Create(input model.NewContent, user model.User)
 	return createdContent, nil
 }
 
-func (cr *ContentRepositoryImpl) Update(input model.EditContent, user model.User) (*model.Content, error) {
-	category, err := cr.categoryRepo.GetByID(input.CategoryID)
+func (cr *ContentRepositoryImpl) Update(ctx context.Context, input model.EditContent, user model.User) (*model.Content, error) {
+	category, err := cr.categoryRepo.GetByID(ctx, input.CategoryID)
 
 	if err != nil {
 		return nil, errors.New("create content failed, category not found")
@@ -133,7 +133,7 @@ func (cr *ContentRepositoryImpl) Update(input model.EditContent, user model.User
 	var collection *mongo.Collection = database.GetCollection(contentCollection)
 
 	var updateResult *mongo.SingleResult = collection.FindOneAndUpdate(
-		context.TODO(),
+		ctx,
 		query,
 		update,
 		options.FindOneAndUpdate().SetReturnDocument(options.After),
@@ -156,7 +156,7 @@ func (cr *ContentRepositoryImpl) Update(input model.EditContent, user model.User
 
 }
 
-func (cr *ContentRepositoryImpl) Delete(input model.DeleteContent, user model.User) (bool, error) {
+func (cr *ContentRepositoryImpl) Delete(ctx context.Context, input model.DeleteContent, user model.User) (bool, error) {
 	cID, err := primitive.ObjectIDFromHex(input.ContentID)
 	if err != nil {
 		return false, errors.New("id is invalid")
@@ -169,7 +169,7 @@ func (cr *ContentRepositoryImpl) Delete(input model.DeleteContent, user model.Us
 
 	var collection *mongo.Collection = database.GetCollection(contentCollection)
 
-	result, err := collection.DeleteOne(context.TODO(), query)
+	result, err := collection.DeleteOne(ctx, query)
 	var isFailed bool = err != nil || result.DeletedCount < 1
 
 	if isFailed {

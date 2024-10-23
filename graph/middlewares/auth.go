@@ -35,7 +35,7 @@ func NewMiddleware() func(http.Handler) http.Handler {
 
 			var userService services.UserService = services.InitUserService()
 
-			userData, err := userService.GetUserInfo(tokenData.UserId)
+			userData, err := userService.GetUserInfo(r.Context(), tokenData.UserId)
 
 			if err != nil {
 				http.Error(w, "user not found", http.StatusForbidden)
