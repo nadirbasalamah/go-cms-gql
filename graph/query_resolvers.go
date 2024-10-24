@@ -104,6 +104,16 @@ func (r *queryResolver) ContentsByCategory(ctx context.Context, categoryID strin
 	return contents, nil
 }
 
+func (r *queryResolver) ContentsByUser(ctx context.Context) ([]*model.Content, error) {
+	//TODO: implement this
+	user := middlewares.ForContext(ctx)
+	if user == nil {
+		return nil, errors.New("access denied")
+	}
+
+	return r.contentService.GetByUser(ctx, *user)
+}
+
 // Tags is the resolver for the tags field.
 func (r *queryResolver) Tags(ctx context.Context, input model.GetTag) ([]string, error) {
 	user := middlewares.ForContext(ctx)

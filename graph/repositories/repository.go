@@ -23,6 +23,7 @@ type ContentRepository interface {
 	GetAll(ctx context.Context, keyword string) ([]*model.Content, error)
 	GetByID(ctx context.Context, contentID string) (*model.Content, error)
 	GetByCategoryID(ctx context.Context, categoryID string) ([]*model.Content, error)
+	GetByUser(ctx context.Context, user model.User) ([]*model.Content, error)
 	Create(ctx context.Context, input model.NewContent, user model.User) (*model.Content, error)
 	Update(ctx context.Context, input model.EditContent, user model.User) (*model.Content, error)
 	Delete(ctx context.Context, input model.DeleteContent, user model.User) (bool, error)

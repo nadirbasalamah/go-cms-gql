@@ -42,6 +42,7 @@ type Query {
   category(id: ID!): Category!
   contents(keyword: String): [Content!]!
   contentsByCategory(categoryID: ID!): [Content!]!
+  contentsByUser: [Content!]!
   content(id: ID!): Content!
   tags(input: GetTag!): [String!]!
   generateContent(input: GenerateContent!): String!

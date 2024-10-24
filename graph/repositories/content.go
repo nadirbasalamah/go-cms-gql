@@ -104,6 +104,26 @@ func (cr *ContentRepositoryImpl) GetByCategoryID(ctx context.Context, categoryID
 	return contents, nil
 }
 
+func (cr *ContentRepositoryImpl) GetByUser(ctx context.Context, user model.User) ([]*model.Content, error) {
+	var query primitive.D = bson.D{{Key: "author._id", Value: user.ID}}
+
+	var findOptions *options.FindOptions = options.Find()
+	findOptions.SetSort(bson.D{{Key: "createdAt", Value: -1}})
+
+	cursor, err := database.GetCollection(contentCollection).Find(ctx, query, findOptions)
+	if err != nil {
+		return nil, errors.New("error occurred when fetching contents")
+	}
+
+	var contents []*model.Content = make([]*model.Content, 0)
+
+	if err := cursor.All(ctx, &contents); err != nil {
+		return nil, errors.New("error occurred when fetching contents")
+	}
+
+	return contents, nil
+}
+
 func (cr *ContentRepositoryImpl) Create(ctx context.Context, input model.NewContent, user model.User) (*model.Content, error) {
 	category, err := cr.categoryRepo.GetByID(ctx, input.CategoryID)
 
