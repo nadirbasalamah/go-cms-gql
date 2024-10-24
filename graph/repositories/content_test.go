@@ -10,7 +10,7 @@ import (
 
 func TestGetAll(t *testing.T) {
 	t.Run("GetAll | Valid", func(t *testing.T) {
-		contentRepository.On("GetAll", ctx).Return([]*model.Content{}, nil).Once()
+		contentRepository.On("GetAll", ctx, "").Return([]*model.Content{}, nil).Once()
 
 		result, err := contentService.GetAll(ctx, "")
 
@@ -19,7 +19,7 @@ func TestGetAll(t *testing.T) {
 	})
 
 	t.Run("GetAll | Invalid", func(t *testing.T) {
-		contentRepository.On("GetAll", ctx).Return([]*model.Content{}, errors.New("error")).Once()
+		contentRepository.On("GetAll", ctx, "").Return([]*model.Content{}, errors.New("error")).Once()
 
 		result, err := contentService.GetAll(ctx, "")
 
@@ -42,6 +42,46 @@ func TestGetByID(t *testing.T) {
 		contentRepository.On("GetByID", ctx, "0").Return(&model.Content{}, errors.New("whoops")).Once()
 
 		result, err := contentService.GetByID(ctx, "0")
+
+		assert.NotNil(t, result)
+		assert.NotNil(t, err)
+	})
+}
+
+func TestGetByCategoryID(t *testing.T) {
+	t.Run("GetByCategoryID | Valid", func(t *testing.T) {
+		contentRepository.On("GetByCategoryID", ctx, "1").Return([]*model.Content{}, nil).Once()
+
+		result, err := contentService.GetByCategoryID(ctx, "1")
+
+		assert.NotNil(t, result)
+		assert.Nil(t, err)
+	})
+
+	t.Run("GetByCategoryID | Invalid", func(t *testing.T) {
+		contentRepository.On("GetByCategoryID", ctx, "0").Return([]*model.Content{}, errors.New("whoops")).Once()
+
+		result, err := contentService.GetByCategoryID(ctx, "0")
+
+		assert.NotNil(t, result)
+		assert.NotNil(t, err)
+	})
+}
+
+func TestGetByUser(t *testing.T) {
+	t.Run("GetByUser | Valid", func(t *testing.T) {
+		contentRepository.On("GetByUser", ctx, model.User{}).Return([]*model.Content{}, nil).Once()
+
+		result, err := contentService.GetByUser(ctx, model.User{})
+
+		assert.NotNil(t, result)
+		assert.Nil(t, err)
+	})
+
+	t.Run("GetByUser | Invalid", func(t *testing.T) {
+		contentRepository.On("GetByUser", ctx, model.User{}).Return([]*model.Content{}, errors.New("whoops")).Once()
+
+		result, err := contentService.GetByUser(ctx, model.User{})
 
 		assert.NotNil(t, result)
 		assert.NotNil(t, err)

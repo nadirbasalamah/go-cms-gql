@@ -23,7 +23,7 @@ var (
 func TestMain(m *testing.M) {
 	userService = services.InitUserService(&userRepository)
 	categoryService = services.InitCategoryService(&categoryRepository)
-	// contentService = services.InitContentService(&contentRepository)
+	contentService = services.InitContentService(&contentRepository)
 
 	ctx = context.TODO()
 

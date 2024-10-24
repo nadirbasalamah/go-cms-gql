@@ -72,9 +72,9 @@ func (_m *ContentRepository) Delete(ctx context.Context, input model.DeleteConte
 	return r0, r1
 }
 
-// GetAll provides a mock function with given fields: ctx
-func (_m *ContentRepository) GetAll(ctx context.Context) ([]*model.Content, error) {
-	ret := _m.Called(ctx)
+// GetAll provides a mock function with given fields: ctx, keyword
+func (_m *ContentRepository) GetAll(ctx context.Context, keyword string) ([]*model.Content, error) {
+	ret := _m.Called(ctx, keyword)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetAll")
@@ -82,19 +82,49 @@ func (_m *ContentRepository) GetAll(ctx context.Context) ([]*model.Content, erro
 
 	var r0 []*model.Content
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context) ([]*model.Content, error)); ok {
-		return rf(ctx)
+	if rf, ok := ret.Get(0).(func(context.Context, string) ([]*model.Content, error)); ok {
+		return rf(ctx, keyword)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context) []*model.Content); ok {
-		r0 = rf(ctx)
+	if rf, ok := ret.Get(0).(func(context.Context, string) []*model.Content); ok {
+		r0 = rf(ctx, keyword)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]*model.Content)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context) error); ok {
-		r1 = rf(ctx)
+	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = rf(ctx, keyword)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GetByCategoryID provides a mock function with given fields: ctx, categoryID
+func (_m *ContentRepository) GetByCategoryID(ctx context.Context, categoryID string) ([]*model.Content, error) {
+	ret := _m.Called(ctx, categoryID)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetByCategoryID")
+	}
+
+	var r0 []*model.Content
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, string) ([]*model.Content, error)); ok {
+		return rf(ctx, categoryID)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, string) []*model.Content); ok {
+		r0 = rf(ctx, categoryID)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]*model.Content)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = rf(ctx, categoryID)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -125,6 +155,36 @@ func (_m *ContentRepository) GetByID(ctx context.Context, contentID string) (*mo
 
 	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
 		r1 = rf(ctx, contentID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GetByUser provides a mock function with given fields: ctx, user
+func (_m *ContentRepository) GetByUser(ctx context.Context, user model.User) ([]*model.Content, error) {
+	ret := _m.Called(ctx, user)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetByUser")
+	}
+
+	var r0 []*model.Content
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, model.User) ([]*model.Content, error)); ok {
+		return rf(ctx, user)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, model.User) []*model.Content); ok {
+		r0 = rf(ctx, user)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]*model.Content)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, model.User) error); ok {
+		r1 = rf(ctx, user)
 	} else {
 		r1 = ret.Error(1)
 	}
