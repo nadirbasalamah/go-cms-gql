@@ -12,7 +12,7 @@ func TestGetAll(t *testing.T) {
 	t.Run("GetAll | Valid", func(t *testing.T) {
 		contentRepository.On("GetAll", ctx).Return([]*model.Content{}, nil).Once()
 
-		result, err := contentService.GetAll(ctx)
+		result, err := contentService.GetAll(ctx, "")
 
 		assert.NotNil(t, result)
 		assert.Nil(t, err)
@@ -21,7 +21,7 @@ func TestGetAll(t *testing.T) {
 	t.Run("GetAll | Invalid", func(t *testing.T) {
 		contentRepository.On("GetAll", ctx).Return([]*model.Content{}, errors.New("error")).Once()
 
-		result, err := contentService.GetAll(ctx)
+		result, err := contentService.GetAll(ctx, "")
 
 		assert.NotNil(t, result)
 		assert.NotNil(t, err)

@@ -43,6 +43,8 @@ type Query {
   contents(keyword: String): [Content!]!
   contentsByCategory(categoryID: ID!): [Content!]!
   content(id: ID!): Content!
+  tags(content: String!): [String!]!
+  generateContent(input: GenerateContent!): String!
   user: UserData!
 }
 
@@ -86,6 +88,12 @@ input EditContent {
 
 input DeleteContent {
   contentId: ID! @validate(rule: "required")
+}
+
+input GenerateContent {
+  topic: String! @validate(rule: "required")
+  title: String! @validate(rule: "required")
+  duration: Int! @validate(rule: "required,gte=1")
 }
 
 type Mutation {

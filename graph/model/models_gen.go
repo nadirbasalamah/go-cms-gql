@@ -43,6 +43,12 @@ type EditContent struct {
 	CategoryID string `json:"categoryId" bson:"categoryId"`
 }
 
+type GenerateContent struct {
+	Topic    string `json:"topic" bson:"topic"`
+	Title    string `json:"title" bson:"title"`
+	Duration int    `json:"duration" bson:"duration"`
+}
+
 type LoginInput struct {
 	Email    string `json:"email" bson:"email"`
 	Password string `json:"password" bson:"password"`

@@ -83,6 +83,8 @@ type ComplexityRoot struct {
 		Content            func(childComplexity int, id string) int
 		Contents           func(childComplexity int, keyword *string) int
 		ContentsByCategory func(childComplexity int, categoryID string) int
+		GenerateContent    func(childComplexity int, input model.GenerateContent) int
+		Tags               func(childComplexity int, content string) int
 		User               func(childComplexity int) int
 	}
 
@@ -121,6 +123,8 @@ type QueryResolver interface {
 	Contents(ctx context.Context, keyword *string) ([]*model.Content, error)
 	ContentsByCategory(ctx context.Context, categoryID string) ([]*model.Content, error)
 	Content(ctx context.Context, id string) (*model.Content, error)
+	Tags(ctx context.Context, content string) ([]string, error)
+	GenerateContent(ctx context.Context, input model.GenerateContent) (string, error)
 	User(ctx context.Context) (*model.UserData, error)
 }
 
@@ -371,6 +375,30 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.ContentsByCategory(childComplexity, args["categoryID"].(string)), true
 
+	case "Query.generateContent":
+		if e.complexity.Query.GenerateContent == nil {
+			break
+		}
+
+		args, err := ec.field_Query_generateContent_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GenerateContent(childComplexity, args["input"].(model.GenerateContent)), true
+
+	case "Query.tags":
+		if e.complexity.Query.Tags == nil {
+			break
+		}
+
+		args, err := ec.field_Query_tags_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Tags(childComplexity, args["content"].(string)), true
+
 	case "Query.user":
 		if e.complexity.Query.User == nil {
 			break
@@ -474,6 +502,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputDeleteContent,
 		ec.unmarshalInputEditCategory,
 		ec.unmarshalInputEditContent,
+		ec.unmarshalInputGenerateContent,
 		ec.unmarshalInputLoginInput,
 		ec.unmarshalInputNewCategory,
 		ec.unmarshalInputNewContent,
@@ -922,6 +951,52 @@ func (ec *executionContext) field_Query_contents_argsKeyword(
 	}
 
 	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_generateContent_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	arg0, err := ec.field_Query_generateContent_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Query_generateContent_argsInput(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (model.GenerateContent, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNGenerateContent2goᚑcmsᚑgqlᚋgraphᚋmodelᚐGenerateContent(ctx, tmp)
+	}
+
+	var zeroVal model.GenerateContent
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_tags_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	arg0, err := ec.field_Query_tags_argsContent(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["content"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Query_tags_argsContent(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("content"))
+	if tmp, ok := rawArgs["content"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
 	return zeroVal, nil
 }
 
@@ -2303,6 +2378,116 @@ func (ec *executionContext) fieldContext_Query_content(ctx context.Context, fiel
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_content_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_tags(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_tags(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Tags(rctx, fc.Args["content"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]string)
+	fc.Result = res
+	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_tags(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_tags_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_generateContent(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_generateContent(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GenerateContent(rctx, fc.Args["input"].(model.GenerateContent))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_generateContent(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_generateContent_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -5085,6 +5270,107 @@ func (ec *executionContext) unmarshalInputEditContent(ctx context.Context, obj i
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputGenerateContent(ctx context.Context, obj interface{}) (model.GenerateContent, error) {
+	var it model.GenerateContent
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"topic", "title", "duration"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "topic":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("topic"))
+			directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalNString2string(ctx, v) }
+
+			directive1 := func(ctx context.Context) (interface{}, error) {
+				rule, err := ec.unmarshalNString2string(ctx, "required")
+				if err != nil {
+					var zeroVal string
+					return zeroVal, err
+				}
+				if ec.directives.Validate == nil {
+					var zeroVal string
+					return zeroVal, errors.New("directive validate is not implemented")
+				}
+				return ec.directives.Validate(ctx, obj, directive0, rule)
+			}
+
+			tmp, err := directive1(ctx)
+			if err != nil {
+				return it, graphql.ErrorOnPath(ctx, err)
+			}
+			if data, ok := tmp.(string); ok {
+				it.Topic = data
+			} else {
+				err := fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
+				return it, graphql.ErrorOnPath(ctx, err)
+			}
+		case "title":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("title"))
+			directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalNString2string(ctx, v) }
+
+			directive1 := func(ctx context.Context) (interface{}, error) {
+				rule, err := ec.unmarshalNString2string(ctx, "required")
+				if err != nil {
+					var zeroVal string
+					return zeroVal, err
+				}
+				if ec.directives.Validate == nil {
+					var zeroVal string
+					return zeroVal, errors.New("directive validate is not implemented")
+				}
+				return ec.directives.Validate(ctx, obj, directive0, rule)
+			}
+
+			tmp, err := directive1(ctx)
+			if err != nil {
+				return it, graphql.ErrorOnPath(ctx, err)
+			}
+			if data, ok := tmp.(string); ok {
+				it.Title = data
+			} else {
+				err := fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
+				return it, graphql.ErrorOnPath(ctx, err)
+			}
+		case "duration":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("duration"))
+			directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalNInt2int(ctx, v) }
+
+			directive1 := func(ctx context.Context) (interface{}, error) {
+				rule, err := ec.unmarshalNString2string(ctx, "required,gte=1")
+				if err != nil {
+					var zeroVal int
+					return zeroVal, err
+				}
+				if ec.directives.Validate == nil {
+					var zeroVal int
+					return zeroVal, errors.New("directive validate is not implemented")
+				}
+				return ec.directives.Validate(ctx, obj, directive0, rule)
+			}
+
+			tmp, err := directive1(ctx)
+			if err != nil {
+				return it, graphql.ErrorOnPath(ctx, err)
+			}
+			if data, ok := tmp.(int); ok {
+				it.Duration = data
+			} else {
+				err := fmt.Errorf(`unexpected type %T from directive, should be int`, tmp)
+				return it, graphql.ErrorOnPath(ctx, err)
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputLoginInput(ctx context.Context, obj interface{}) (model.LoginInput, error) {
 	var it model.LoginInput
 	asMap := map[string]interface{}{}
@@ -5754,6 +6040,50 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "tags":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_tags(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "generateContent":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_generateContent(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "user":
 			field := field
 
@@ -6406,6 +6736,11 @@ func (ec *executionContext) unmarshalNEditContent2goᚑcmsᚑgqlᚋgraphᚋmodel
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNGenerateContent2goᚑcmsᚑgqlᚋgraphᚋmodelᚐGenerateContent(ctx context.Context, v interface{}) (model.GenerateContent, error) {
+	res, err := ec.unmarshalInputGenerateContent(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNID2string(ctx context.Context, v interface{}) (string, error) {
 	res, err := graphql.UnmarshalID(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -6413,6 +6748,21 @@ func (ec *executionContext) unmarshalNID2string(ctx context.Context, v interface
 
 func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
 	res := graphql.MarshalID(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+	}
+	return res
+}
+
+func (ec *executionContext) unmarshalNInt2int(ctx context.Context, v interface{}) (int, error) {
+	res, err := graphql.UnmarshalInt(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.SelectionSet, v int) graphql.Marshaler {
+	res := graphql.MarshalInt(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -6454,6 +6804,38 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) unmarshalNString2ᚕstringᚄ(ctx context.Context, v interface{}) ([]string, error) {
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]string, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNString2string(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalNString2ᚕstringᚄ(ctx context.Context, sel ast.SelectionSet, v []string) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	for i := range v {
+		ret[i] = ec.marshalNString2string(ctx, sel, v[i])
+	}
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
 }
 
 func (ec *executionContext) unmarshalNTime2timeᚐTime(ctx context.Context, v interface{}) (time.Time, error) {

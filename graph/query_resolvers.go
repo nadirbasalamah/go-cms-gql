@@ -103,3 +103,13 @@ func (r *queryResolver) ContentsByCategory(ctx context.Context, categoryID strin
 
 	return contents, nil
 }
+
+// Tags is the resolver for the tags field.
+func (r *queryResolver) Tags(ctx context.Context, content string) ([]string, error) {
+	return r.recommendationService.GetTags(ctx, content)
+}
+
+// GenerateContent is the resolver for the generateContent field.
+func (r *queryResolver) GenerateContent(ctx context.Context, generateInput model.GenerateContent) (string, error) {
+	return r.recommendationService.GenerateContent(ctx, generateInput)
+}

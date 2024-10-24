@@ -27,3 +27,8 @@ type ContentService interface {
 	Update(ctx context.Context, input model.EditContent, user model.User) (*model.Content, error)
 	Delete(ctx context.Context, input model.DeleteContent, user model.User) (bool, error)
 }
+
+type RecommendationService interface {
+	GenerateContent(ctx context.Context, generateInput model.GenerateContent) (string, error)
+	GetTags(ctx context.Context, content string) ([]string, error)
+}

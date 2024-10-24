@@ -6,15 +6,17 @@ import (
 )
 
 type Resolver struct {
-	userService     services.UserService
-	categoryService services.CategoryService
-	contentService  services.ContentService
+	userService           services.UserService
+	categoryService       services.CategoryService
+	contentService        services.ContentService
+	recommendationService services.RecommendationService
 }
 
 func InitResolver() *Resolver {
 	return &Resolver{
-		userService:     services.InitUserService(repositories.InitUserRepository()),
-		categoryService: services.InitCategoryService(repositories.InitCategoryRepository()),
-		contentService:  services.InitContentService(repositories.InitContentRepository()),
+		userService:           services.InitUserService(repositories.InitUserRepository()),
+		categoryService:       services.InitCategoryService(repositories.InitCategoryRepository()),
+		contentService:        services.InitContentService(repositories.InitContentRepository()),
+		recommendationService: services.InitRecommendationService(),
 	}
 }
