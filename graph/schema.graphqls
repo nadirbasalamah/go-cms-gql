@@ -43,7 +43,7 @@ type Query {
   contents(keyword: String): [Content!]!
   contentsByCategory(categoryID: ID!): [Content!]!
   content(id: ID!): Content!
-  tags(content: String!): [String!]!
+  tags(input: GetTag!): [String!]!
   generateContent(input: GenerateContent!): String!
   user: UserData!
 }
@@ -88,6 +88,10 @@ input EditContent {
 
 input DeleteContent {
   contentId: ID! @validate(rule: "required")
+}
+
+input GetTag {
+  content: String! @validate(rule: "required")
 }
 
 input GenerateContent {

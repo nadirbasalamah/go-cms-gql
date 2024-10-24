@@ -17,6 +17,6 @@ func (rs *RecommendationServiceImpl) GenerateContent(ctx context.Context, genera
 	return utils.GenerateContent(ctx, generateInput)
 }
 
-func (rs *RecommendationServiceImpl) GetTags(ctx context.Context, content string) ([]string, error) {
-	return utils.GetTags(ctx, content)
+func (rs *RecommendationServiceImpl) GetTags(ctx context.Context, input model.GetTag) ([]string, error) {
+	return utils.GetTags(ctx, input)
 }

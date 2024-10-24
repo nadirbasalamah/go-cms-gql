@@ -105,11 +105,21 @@ func (r *queryResolver) ContentsByCategory(ctx context.Context, categoryID strin
 }
 
 // Tags is the resolver for the tags field.
-func (r *queryResolver) Tags(ctx context.Context, content string) ([]string, error) {
-	return r.recommendationService.GetTags(ctx, content)
+func (r *queryResolver) Tags(ctx context.Context, input model.GetTag) ([]string, error) {
+	user := middlewares.ForContext(ctx)
+	if user == nil {
+		return nil, errors.New("access denied")
+	}
+
+	return r.recommendationService.GetTags(ctx, input)
 }
 
 // GenerateContent is the resolver for the generateContent field.
 func (r *queryResolver) GenerateContent(ctx context.Context, generateInput model.GenerateContent) (string, error) {
+	user := middlewares.ForContext(ctx)
+	if user == nil {
+		return "", errors.New("access denied")
+	}
+
 	return r.recommendationService.GenerateContent(ctx, generateInput)
 }

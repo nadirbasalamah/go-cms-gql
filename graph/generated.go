@@ -84,7 +84,7 @@ type ComplexityRoot struct {
 		Contents           func(childComplexity int, keyword *string) int
 		ContentsByCategory func(childComplexity int, categoryID string) int
 		GenerateContent    func(childComplexity int, input model.GenerateContent) int
-		Tags               func(childComplexity int, content string) int
+		Tags               func(childComplexity int, input model.GetTag) int
 		User               func(childComplexity int) int
 	}
 
@@ -123,7 +123,7 @@ type QueryResolver interface {
 	Contents(ctx context.Context, keyword *string) ([]*model.Content, error)
 	ContentsByCategory(ctx context.Context, categoryID string) ([]*model.Content, error)
 	Content(ctx context.Context, id string) (*model.Content, error)
-	Tags(ctx context.Context, content string) ([]string, error)
+	Tags(ctx context.Context, input model.GetTag) ([]string, error)
 	GenerateContent(ctx context.Context, input model.GenerateContent) (string, error)
 	User(ctx context.Context) (*model.UserData, error)
 }
@@ -397,7 +397,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Tags(childComplexity, args["content"].(string)), true
+		return e.complexity.Query.Tags(childComplexity, args["input"].(model.GetTag)), true
 
 	case "Query.user":
 		if e.complexity.Query.User == nil {
@@ -503,6 +503,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputEditCategory,
 		ec.unmarshalInputEditContent,
 		ec.unmarshalInputGenerateContent,
+		ec.unmarshalInputGetTag,
 		ec.unmarshalInputLoginInput,
 		ec.unmarshalInputNewCategory,
 		ec.unmarshalInputNewContent,
@@ -980,23 +981,23 @@ func (ec *executionContext) field_Query_generateContent_argsInput(
 func (ec *executionContext) field_Query_tags_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	arg0, err := ec.field_Query_tags_argsContent(ctx, rawArgs)
+	arg0, err := ec.field_Query_tags_argsInput(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
-	args["content"] = arg0
+	args["input"] = arg0
 	return args, nil
 }
-func (ec *executionContext) field_Query_tags_argsContent(
+func (ec *executionContext) field_Query_tags_argsInput(
 	ctx context.Context,
 	rawArgs map[string]interface{},
-) (string, error) {
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("content"))
-	if tmp, ok := rawArgs["content"]; ok {
-		return ec.unmarshalNString2string(ctx, tmp)
+) (model.GetTag, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNGetTag2goᚑcmsᚑgqlᚋgraphᚋmodelᚐGetTag(ctx, tmp)
 	}
 
-	var zeroVal string
+	var zeroVal model.GetTag
 	return zeroVal, nil
 }
 
@@ -2398,7 +2399,7 @@ func (ec *executionContext) _Query_tags(ctx context.Context, field graphql.Colle
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Tags(rctx, fc.Args["content"].(string))
+		return ec.resolvers.Query().Tags(rctx, fc.Args["input"].(model.GetTag))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5371,6 +5372,53 @@ func (ec *executionContext) unmarshalInputGenerateContent(ctx context.Context, o
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputGetTag(ctx context.Context, obj interface{}) (model.GetTag, error) {
+	var it model.GetTag
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"content"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "content":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("content"))
+			directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalNString2string(ctx, v) }
+
+			directive1 := func(ctx context.Context) (interface{}, error) {
+				rule, err := ec.unmarshalNString2string(ctx, "required")
+				if err != nil {
+					var zeroVal string
+					return zeroVal, err
+				}
+				if ec.directives.Validate == nil {
+					var zeroVal string
+					return zeroVal, errors.New("directive validate is not implemented")
+				}
+				return ec.directives.Validate(ctx, obj, directive0, rule)
+			}
+
+			tmp, err := directive1(ctx)
+			if err != nil {
+				return it, graphql.ErrorOnPath(ctx, err)
+			}
+			if data, ok := tmp.(string); ok {
+				it.Content = data
+			} else {
+				err := fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
+				return it, graphql.ErrorOnPath(ctx, err)
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputLoginInput(ctx context.Context, obj interface{}) (model.LoginInput, error) {
 	var it model.LoginInput
 	asMap := map[string]interface{}{}
@@ -6738,6 +6786,11 @@ func (ec *executionContext) unmarshalNEditContent2goᚑcmsᚑgqlᚋgraphᚋmodel
 
 func (ec *executionContext) unmarshalNGenerateContent2goᚑcmsᚑgqlᚋgraphᚋmodelᚐGenerateContent(ctx context.Context, v interface{}) (model.GenerateContent, error) {
 	res, err := ec.unmarshalInputGenerateContent(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNGetTag2goᚑcmsᚑgqlᚋgraphᚋmodelᚐGetTag(ctx context.Context, v interface{}) (model.GetTag, error) {
+	res, err := ec.unmarshalInputGetTag(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 

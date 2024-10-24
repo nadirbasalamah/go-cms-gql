@@ -49,6 +49,10 @@ type GenerateContent struct {
 	Duration int    `json:"duration" bson:"duration"`
 }
 
+type GetTag struct {
+	Content string `json:"content" bson:"content"`
+}
+
 type LoginInput struct {
 	Email    string `json:"email" bson:"email"`
 	Password string `json:"password" bson:"password"`

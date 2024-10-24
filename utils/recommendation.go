@@ -83,7 +83,7 @@ func GenerateContent(ctx context.Context, generateInput model.GenerateContent) (
 	return responseContent, nil
 }
 
-func GetTags(ctx context.Context, content string) ([]string, error) {
+func GetTags(ctx context.Context, input model.GetTag) ([]string, error) {
 	// request
 	requestBody := OpenAIRequest{
 		Model: GetValue("OPENAI_MODEL"),
@@ -94,7 +94,7 @@ func GetTags(ctx context.Context, content string) ([]string, error) {
 			},
 			{
 				Role:    "user",
-				Content: "create a tags based on the given article in array of string format. return string of tags without any explanation. this is the article: " + content,
+				Content: "create a tags based on the given article in array of string format. return string of tags without any explanation. this is the article: " + input.Content,
 			},
 		},
 	}

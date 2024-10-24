@@ -30,5 +30,5 @@ type ContentService interface {
 
 type RecommendationService interface {
 	GenerateContent(ctx context.Context, generateInput model.GenerateContent) (string, error)
-	GetTags(ctx context.Context, content string) ([]string, error)
+	GetTags(ctx context.Context, input model.GetTag) ([]string, error)
 }
