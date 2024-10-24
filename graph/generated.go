@@ -45,6 +45,7 @@ type ResolverRoot interface {
 }
 
 type DirectiveRoot struct {
+	Admin    func(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error)
 	Validate func(ctx context.Context, obj interface{}, next graphql.Resolver, rule string) (res interface{}, err error)
 }
 
@@ -1693,8 +1694,30 @@ func (ec *executionContext) _Mutation_newCategory(ctx context.Context, field gra
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().NewCategory(rctx, fc.Args["input"].(model.NewCategory))
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().NewCategory(rctx, fc.Args["input"].(model.NewCategory))
+		}
+
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Admin == nil {
+				var zeroVal *model.Category
+				return zeroVal, errors.New("directive admin is not implemented")
+			}
+			return ec.directives.Admin(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.Category); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *go-cms-gql/graph/model.Category`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1758,8 +1781,30 @@ func (ec *executionContext) _Mutation_editCategory(ctx context.Context, field gr
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().EditCategory(rctx, fc.Args["input"].(model.EditCategory))
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().EditCategory(rctx, fc.Args["input"].(model.EditCategory))
+		}
+
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Admin == nil {
+				var zeroVal *model.Category
+				return zeroVal, errors.New("directive admin is not implemented")
+			}
+			return ec.directives.Admin(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.Category); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *go-cms-gql/graph/model.Category`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1823,8 +1868,30 @@ func (ec *executionContext) _Mutation_deleteCategory(ctx context.Context, field 
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().DeleteCategory(rctx, fc.Args["input"].(model.DeleteCategory))
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().DeleteCategory(rctx, fc.Args["input"].(model.DeleteCategory))
+		}
+
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Admin == nil {
+				var zeroVal bool
+				return zeroVal, errors.New("directive admin is not implemented")
+			}
+			return ec.directives.Admin(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(bool); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)

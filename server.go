@@ -2,6 +2,7 @@ package main
 
 import (
 	"go-cms-gql/database"
+	"go-cms-gql/directives"
 	"go-cms-gql/graph"
 	"go-cms-gql/graph/middlewares"
 	"go-cms-gql/utils"
@@ -22,13 +23,14 @@ func NewGraphQLHandler() *chi.Mux {
 	router.Use(middleware.Logger)
 	router.Use(middlewares.NewMiddleware())
 
-	utils.InitValidator()
+	directives.InitValidator()
 
 	c := graph.Config{
 		Resolvers: graph.InitResolver(),
 	}
 
-	c.Directives.Validate = utils.ValidateRequest
+	c.Directives.Validate = directives.ValidateRequest
+	c.Directives.Admin = directives.CheckAdmin
 
 	srv := handler.NewDefaultServer(graph.NewExecutableSchema(c))
 

@@ -1,4 +1,4 @@
-package utils
+package directives
 
 import (
 	"context"

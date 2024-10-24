@@ -1,4 +1,5 @@
 directive @validate(rule: String!) on INPUT_FIELD_DEFINITION
+directive @admin on FIELD_DEFINITION
 
 scalar Time
 
@@ -104,9 +105,9 @@ input GenerateContent {
 type Mutation {
   register(input: NewUser!): UserData!
   login(input: LoginInput!): String!
-  newCategory(input: NewCategory!): Category!
-  editCategory(input: EditCategory!): Category!
-  deleteCategory(input: DeleteCategory!): Boolean!
+  newCategory(input: NewCategory!): Category! @admin
+  editCategory(input: EditCategory!): Category! @admin
+  deleteCategory(input: DeleteCategory!): Boolean! @admin
   newContent(input: NewContent!): Content!
   editContent(input: EditContent!): Content!
   deleteContent(input: DeleteContent!): Boolean!
