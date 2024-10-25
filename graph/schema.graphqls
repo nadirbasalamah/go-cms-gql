@@ -1,5 +1,6 @@
 directive @validate(rule: String!) on INPUT_FIELD_DEFINITION
 directive @admin on FIELD_DEFINITION
+directive @auth on FIELD_DEFINITION
 
 scalar Time
 
@@ -43,7 +44,7 @@ type Query {
   category(id: ID!): Category!
   contents(keyword: String): [Content!]!
   contentsByCategory(categoryID: ID!): [Content!]!
-  contentsByUser: [Content!]!
+  contentsByUser: [Content!]! @auth
   content(id: ID!): Content!
   tags(input: GetTag!): [String!]!
   generateContent(input: GenerateContent!): String!

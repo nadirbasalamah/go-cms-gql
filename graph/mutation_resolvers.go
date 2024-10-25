@@ -3,7 +3,6 @@ package graph
 import (
 	"context"
 	"errors"
-	"go-cms-gql/graph/middlewares"
 	"go-cms-gql/graph/model"
 	"go-cms-gql/utils"
 )
@@ -47,7 +46,7 @@ func (r *mutationResolver) DeleteCategory(ctx context.Context, input model.Delet
 
 // NewContent is the resolver for the newContent field.
 func (r *mutationResolver) NewContent(ctx context.Context, input model.NewContent) (*model.Content, error) {
-	user, err := middlewares.GetAuthenticatedUser(ctx)
+	user, err := utils.GetAuthenticatedUser(ctx)
 	if err != nil {
 		return nil, errors.New("access denied")
 	}
@@ -57,7 +56,7 @@ func (r *mutationResolver) NewContent(ctx context.Context, input model.NewConten
 
 // EditContent is the resolver for the editContent field.
 func (r *mutationResolver) EditContent(ctx context.Context, input model.EditContent) (*model.Content, error) {
-	user, err := middlewares.GetAuthenticatedUser(ctx)
+	user, err := utils.GetAuthenticatedUser(ctx)
 	if err != nil {
 		return nil, errors.New("access denied")
 	}
@@ -67,7 +66,7 @@ func (r *mutationResolver) EditContent(ctx context.Context, input model.EditCont
 
 // DeleteContent is the resolver for the deleteContent field.
 func (r *mutationResolver) DeleteContent(ctx context.Context, input model.DeleteContent) (bool, error) {
-	user, err := middlewares.GetAuthenticatedUser(ctx)
+	user, err := utils.GetAuthenticatedUser(ctx)
 	if err != nil {
 		return false, errors.New("access denied")
 	}

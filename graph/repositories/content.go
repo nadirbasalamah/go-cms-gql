@@ -104,8 +104,14 @@ func (cr *ContentRepositoryImpl) GetByCategoryID(ctx context.Context, categoryID
 	return contents, nil
 }
 
-func (cr *ContentRepositoryImpl) GetByUser(ctx context.Context, user model.User) ([]*model.Content, error) {
-	var query primitive.D = bson.D{{Key: "author._id", Value: user.ID}}
+func (cr *ContentRepositoryImpl) GetByUser(ctx context.Context) ([]*model.Content, error) {
+	user, err := utils.GetAuthenticatedUser(ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var query primitive.D = bson.D{{Key: "author._id", Value: &user.ID}}
 
 	var findOptions *options.FindOptions = options.Find()
 	findOptions.SetSort(bson.D{{Key: "createdAt", Value: -1}})

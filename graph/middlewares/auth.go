@@ -2,7 +2,6 @@ package middlewares
 
 import (
 	"context"
-	"errors"
 	"net/http"
 
 	"go-cms-gql/graph/model"
@@ -11,11 +10,11 @@ import (
 	"go-cms-gql/utils"
 )
 
-type contextKey struct {
-	name string
-}
+// type contextKey struct {
+// 	name string
+// }
 
-var userCtxKey = &contextKey{"user"}
+// var userCtxKey = &utils.ContextKey{"user"}
 
 func NewMiddleware() func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
@@ -45,7 +44,7 @@ func NewMiddleware() func(http.Handler) http.Handler {
 
 			var user model.User = *userData
 
-			ctx := context.WithValue(r.Context(), userCtxKey, &user)
+			ctx := context.WithValue(r.Context(), utils.UserCtxKey, &user)
 
 			r = r.WithContext(ctx)
 			next.ServeHTTP(w, r)
@@ -53,25 +52,25 @@ func NewMiddleware() func(http.Handler) http.Handler {
 	}
 }
 
-func ForContext(ctx context.Context) *model.User {
-	raw, _ := ctx.Value(userCtxKey).(*model.User)
-	return raw
-}
+// func ForContext(ctx context.Context) *model.User {
+// 	raw, _ := ctx.Value(utils.UserCtxKey).(*model.User)
+// 	return raw
+// }
 
-func GetAuthenticatedUser(ctx context.Context) (*model.User, error) {
-	user := ForContext(ctx)
-	if user == nil {
-		return nil, errors.New("access denied")
-	}
-	return user, nil
-}
+// func GetAuthenticatedUser(ctx context.Context) (*model.User, error) {
+// 	user := ForContext(ctx)
+// 	if user == nil {
+// 		return nil, errors.New("access denied")
+// 	}
+// 	return user, nil
+// }
 
-func CheckAdminRole(ctx context.Context) error {
-	user := ForContext(ctx)
+// func CheckAdminRole(ctx context.Context) error {
+// 	user := ForContext(ctx)
 
-	if user == nil || user.Role != utils.ADMIN_ROLE {
-		return errors.New("access denied")
-	}
+// 	if user == nil || user.Role != utils.ADMIN_ROLE {
+// 		return errors.New("access denied")
+// 	}
 
-	return nil
-}
+// 	return nil
+// }

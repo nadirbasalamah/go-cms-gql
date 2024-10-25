@@ -31,6 +31,7 @@ func NewGraphQLHandler() *chi.Mux {
 
 	c.Directives.Validate = directives.ValidateRequest
 	c.Directives.Admin = directives.CheckAdmin
+	c.Directives.Auth = directives.GetAuthenticatedUser
 
 	srv := handler.NewDefaultServer(graph.NewExecutableSchema(c))
 

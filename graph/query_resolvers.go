@@ -3,14 +3,13 @@ package graph
 import (
 	"context"
 	"errors"
-	"go-cms-gql/graph/middlewares"
 	"go-cms-gql/graph/model"
 	"go-cms-gql/utils"
 )
 
 // User is the resolver for the user field.
 func (r *queryResolver) User(ctx context.Context) (*model.UserData, error) {
-	user := middlewares.ForContext(ctx)
+	user := utils.ForContext(ctx)
 	if user == nil {
 		return nil, errors.New("access denied")
 	}
@@ -20,7 +19,7 @@ func (r *queryResolver) User(ctx context.Context) (*model.UserData, error) {
 
 // Categories is the resolver for the categories field.
 func (r *queryResolver) Categories(ctx context.Context) ([]*model.Category, error) {
-	user := middlewares.ForContext(ctx)
+	user := utils.ForContext(ctx)
 	if user == nil {
 		return nil, errors.New("access denied")
 	}
@@ -36,7 +35,7 @@ func (r *queryResolver) Categories(ctx context.Context) ([]*model.Category, erro
 
 // Content is the resolver for the content field.
 func (r *queryResolver) Category(ctx context.Context, id string) (*model.Category, error) {
-	user := middlewares.ForContext(ctx)
+	user := utils.ForContext(ctx)
 	if user == nil {
 		return nil, errors.New("access denied")
 	}
@@ -52,7 +51,7 @@ func (r *queryResolver) Category(ctx context.Context, id string) (*model.Categor
 
 // Contents is the resolver for the contents field.
 func (r *queryResolver) Contents(ctx context.Context, keyword *string) ([]*model.Content, error) {
-	user := middlewares.ForContext(ctx)
+	user := utils.ForContext(ctx)
 	if user == nil {
 		return nil, errors.New("access denied")
 	}
@@ -74,7 +73,7 @@ func (r *queryResolver) Contents(ctx context.Context, keyword *string) ([]*model
 
 // Content is the resolver for the content field.
 func (r *queryResolver) Content(ctx context.Context, id string) (*model.Content, error) {
-	user := middlewares.ForContext(ctx)
+	user := utils.ForContext(ctx)
 	if user == nil {
 		return nil, errors.New("access denied")
 	}
@@ -90,7 +89,7 @@ func (r *queryResolver) Content(ctx context.Context, id string) (*model.Content,
 
 // ContentsByCategory is the resolver for the contentsByCategory field.
 func (r *queryResolver) ContentsByCategory(ctx context.Context, categoryID string) ([]*model.Content, error) {
-	user := middlewares.ForContext(ctx)
+	user := utils.ForContext(ctx)
 	if user == nil {
 		return nil, errors.New("access denied")
 	}
@@ -105,18 +104,12 @@ func (r *queryResolver) ContentsByCategory(ctx context.Context, categoryID strin
 }
 
 func (r *queryResolver) ContentsByUser(ctx context.Context) ([]*model.Content, error) {
-	//TODO: implement this
-	user := middlewares.ForContext(ctx)
-	if user == nil {
-		return nil, errors.New("access denied")
-	}
-
-	return r.contentService.GetByUser(ctx, *user)
+	return r.contentService.GetByUser(ctx)
 }
 
 // Tags is the resolver for the tags field.
 func (r *queryResolver) Tags(ctx context.Context, input model.GetTag) ([]string, error) {
-	user := middlewares.ForContext(ctx)
+	user := utils.ForContext(ctx)
 	if user == nil {
 		return nil, errors.New("access denied")
 	}
@@ -126,7 +119,7 @@ func (r *queryResolver) Tags(ctx context.Context, input model.GetTag) ([]string,
 
 // GenerateContent is the resolver for the generateContent field.
 func (r *queryResolver) GenerateContent(ctx context.Context, generateInput model.GenerateContent) (string, error) {
-	user := middlewares.ForContext(ctx)
+	user := utils.ForContext(ctx)
 	if user == nil {
 		return "", errors.New("access denied")
 	}

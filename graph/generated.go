@@ -46,6 +46,7 @@ type ResolverRoot interface {
 
 type DirectiveRoot struct {
 	Admin    func(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error)
+	Auth     func(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error)
 	Validate func(ctx context.Context, obj interface{}, next graphql.Resolver, rule string) (res interface{}, err error)
 }
 
@@ -2403,8 +2404,30 @@ func (ec *executionContext) _Query_contentsByUser(ctx context.Context, field gra
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().ContentsByUser(rctx)
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().ContentsByUser(rctx)
+		}
+
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Auth == nil {
+				var zeroVal []*model.Content
+				return zeroVal, errors.New("directive auth is not implemented")
+			}
+			return ec.directives.Auth(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.([]*model.Content); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*go-cms-gql/graph/model.Content`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)

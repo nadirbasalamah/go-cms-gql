@@ -28,8 +28,8 @@ func (cs *ContentServiceImpl) GetByCategoryID(ctx context.Context, categoryID st
 	return cs.repository.GetByCategoryID(ctx, categoryID)
 }
 
-func (cs *ContentServiceImpl) GetByUser(ctx context.Context, user model.User) ([]*model.Content, error) {
-	return cs.repository.GetByUser(ctx, user)
+func (cs *ContentServiceImpl) GetByUser(ctx context.Context) ([]*model.Content, error) {
+	return cs.repository.GetByUser(ctx)
 }
 
 func (cs *ContentServiceImpl) Create(ctx context.Context, input model.NewContent, user model.User) (*model.Content, error) {

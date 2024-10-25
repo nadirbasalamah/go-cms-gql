@@ -1,6 +1,9 @@
 package utils
 
 import (
+	"context"
+	"errors"
+	"go-cms-gql/graph/model"
 	"net/http"
 	"strconv"
 	"strings"
@@ -13,6 +16,12 @@ type TokenMetadata struct {
 	Expires int64
 	UserId  string
 }
+
+type contextKey struct {
+	name string
+}
+
+var UserCtxKey = &contextKey{"user"}
 
 func GenerateNewAccessToken(userId string) (string, error) {
 	secret := GetValue("JWT_SECRET_KEY")
@@ -74,6 +83,29 @@ func CheckToken(r *http.Request) (*TokenMetadata, error) {
 	}
 
 	return claims, nil
+}
+
+func ForContext(ctx context.Context) *model.User {
+	raw, _ := ctx.Value(UserCtxKey).(*model.User)
+	return raw
+}
+
+func GetAuthenticatedUser(ctx context.Context) (*model.User, error) {
+	user := ForContext(ctx)
+	if user == nil {
+		return nil, errors.New("access denied")
+	}
+	return user, nil
+}
+
+func CheckAdminRole(ctx context.Context) error {
+	user := ForContext(ctx)
+
+	if user == nil || user.Role != ADMIN_ROLE {
+		return errors.New("access denied")
+	}
+
+	return nil
 }
 
 func verifyToken(r *http.Request) (*jwt.Token, error) {
