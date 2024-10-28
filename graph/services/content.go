@@ -32,14 +32,14 @@ func (cs *ContentServiceImpl) GetByUser(ctx context.Context) ([]*model.Content, 
 	return cs.repository.GetByUser(ctx)
 }
 
-func (cs *ContentServiceImpl) Create(ctx context.Context, input model.NewContent, user model.User) (*model.Content, error) {
-	return cs.repository.Create(ctx, input, user)
+func (cs *ContentServiceImpl) Create(ctx context.Context, input model.NewContent) (*model.Content, error) {
+	return cs.repository.Create(ctx, input)
 }
 
-func (cs *ContentServiceImpl) Update(ctx context.Context, input model.EditContent, user model.User) (*model.Content, error) {
-	return cs.repository.Update(ctx, input, user)
+func (cs *ContentServiceImpl) Update(ctx context.Context, input model.EditContent) (*model.Content, error) {
+	return cs.repository.Update(ctx, input)
 }
 
-func (cs *ContentServiceImpl) Delete(ctx context.Context, input model.DeleteContent, user model.User) (bool, error) {
-	return cs.repository.Delete(ctx, input, user)
+func (cs *ContentServiceImpl) Delete(ctx context.Context, input model.DeleteContent) (bool, error) {
+	return cs.repository.Delete(ctx, input)
 }

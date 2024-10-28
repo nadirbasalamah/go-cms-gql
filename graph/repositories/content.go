@@ -130,17 +130,23 @@ func (cr *ContentRepositoryImpl) GetByUser(ctx context.Context) ([]*model.Conten
 	return contents, nil
 }
 
-func (cr *ContentRepositoryImpl) Create(ctx context.Context, input model.NewContent, user model.User) (*model.Content, error) {
+func (cr *ContentRepositoryImpl) Create(ctx context.Context, input model.NewContent) (*model.Content, error) {
 	category, err := cr.categoryRepo.GetByID(ctx, input.CategoryID)
 
 	if err != nil {
 		return nil, errors.New("create content failed, category not found")
 	}
 
+	user, err := utils.GetAuthenticatedUser(ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
 	var content model.Content = model.Content{
 		Title:     input.Title,
 		Content:   input.Content,
-		Author:    utils.ConvertToUserData(&user),
+		Author:    utils.ConvertToUserData(user),
 		Category:  category,
 		CreatedAt: time.Now(),
 	}
@@ -165,7 +171,7 @@ func (cr *ContentRepositoryImpl) Create(ctx context.Context, input model.NewCont
 	return createdContent, nil
 }
 
-func (cr *ContentRepositoryImpl) Update(ctx context.Context, input model.EditContent, user model.User) (*model.Content, error) {
+func (cr *ContentRepositoryImpl) Update(ctx context.Context, input model.EditContent) (*model.Content, error) {
 	category, err := cr.categoryRepo.GetByID(ctx, input.CategoryID)
 
 	if err != nil {
@@ -177,9 +183,15 @@ func (cr *ContentRepositoryImpl) Update(ctx context.Context, input model.EditCon
 		return nil, errors.New("id is invalid")
 	}
 
+	user, err := utils.GetAuthenticatedUser(ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
 	var query primitive.D = bson.D{
 		{Key: "_id", Value: cID},
-		{Key: "author._id", Value: user.ID},
+		{Key: "author._id", Value: &user.ID},
 	}
 	var update primitive.D = bson.D{{
 		Key: "$set",
@@ -217,15 +229,21 @@ func (cr *ContentRepositoryImpl) Update(ctx context.Context, input model.EditCon
 
 }
 
-func (cr *ContentRepositoryImpl) Delete(ctx context.Context, input model.DeleteContent, user model.User) (bool, error) {
+func (cr *ContentRepositoryImpl) Delete(ctx context.Context, input model.DeleteContent) (bool, error) {
 	cID, err := primitive.ObjectIDFromHex(input.ContentID)
 	if err != nil {
 		return false, errors.New("id is invalid")
 	}
 
+	user, err := utils.GetAuthenticatedUser(ctx)
+
+	if err != nil {
+		return false, err
+	}
+
 	var query primitive.D = bson.D{
 		{Key: "_id", Value: cID},
-		{Key: "author._id", Value: user.ID},
+		{Key: "author._id", Value: &user.ID},
 	}
 
 	var collection *mongo.Collection = database.GetCollection(contentCollection)

@@ -40,15 +40,15 @@ type UserData {
 }
 
 type Query {
-  categories: [Category!]!
-  category(id: ID!): Category!
-  contents(keyword: String): [Content!]!
-  contentsByCategory(categoryID: ID!): [Content!]!
+  categories: [Category!]! @auth
+  category(id: ID!): Category! @auth
+  contents(keyword: String): [Content!]! @auth
+  contentsByCategory(categoryID: ID!): [Content!]! @auth
   contentsByUser: [Content!]! @auth
-  content(id: ID!): Content!
-  tags(input: GetTag!): [String!]!
-  generateContent(input: GenerateContent!): String!
-  user: UserData!
+  content(id: ID!): Content! @auth
+  tags(input: GetTag!): [String!]! @auth
+  generateContent(input: GenerateContent!): String! @auth
+  user: UserData! @auth
 }
 
 input NewUser {
@@ -109,7 +109,7 @@ type Mutation {
   newCategory(input: NewCategory!): Category! @admin
   editCategory(input: EditCategory!): Category! @admin
   deleteCategory(input: DeleteCategory!): Boolean! @admin
-  newContent(input: NewContent!): Content!
-  editContent(input: EditContent!): Content!
-  deleteContent(input: DeleteContent!): Boolean!
+  newContent(input: NewContent!): Content! @auth
+  editContent(input: EditContent!): Content! @auth
+  deleteContent(input: DeleteContent!): Boolean! @auth
 }
