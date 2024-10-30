@@ -21,11 +21,15 @@ var (
 )
 
 func TestMain(m *testing.M) {
-	userService = services.InitUserService(&userRepository)
+	tokenGenFunc := func(userId string) (string, error) {
+		return "token", nil
+	}
+
+	userService = services.InitUserService(&userRepository, tokenGenFunc)
 	categoryService = services.InitCategoryService(&categoryRepository)
 	contentService = services.InitContentService(&contentRepository)
 
-	ctx = context.TODO()
+	ctx = context.Background()
 
 	os.Exit(m.Run())
 }

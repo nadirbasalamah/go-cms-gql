@@ -10,12 +10,6 @@ import (
 	"go-cms-gql/utils"
 )
 
-// type contextKey struct {
-// 	name string
-// }
-
-// var userCtxKey = &utils.ContextKey{"user"}
-
 func NewMiddleware() func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -33,7 +27,7 @@ func NewMiddleware() func(http.Handler) http.Handler {
 				return
 			}
 
-			var userService services.UserService = services.InitUserService(repositories.InitUserRepository())
+			var userService services.UserService = services.InitUserService(repositories.InitUserRepository(), utils.GenerateNewAccessToken)
 
 			userData, err := userService.GetUserInfo(r.Context(), tokenData.UserId)
 
@@ -51,26 +45,3 @@ func NewMiddleware() func(http.Handler) http.Handler {
 		})
 	}
 }
-
-// func ForContext(ctx context.Context) *model.User {
-// 	raw, _ := ctx.Value(utils.UserCtxKey).(*model.User)
-// 	return raw
-// }
-
-// func GetAuthenticatedUser(ctx context.Context) (*model.User, error) {
-// 	user := ForContext(ctx)
-// 	if user == nil {
-// 		return nil, errors.New("access denied")
-// 	}
-// 	return user, nil
-// }
-
-// func CheckAdminRole(ctx context.Context) error {
-// 	user := ForContext(ctx)
-
-// 	if user == nil || user.Role != utils.ADMIN_ROLE {
-// 		return errors.New("access denied")
-// 	}
-
-// 	return nil
-// }

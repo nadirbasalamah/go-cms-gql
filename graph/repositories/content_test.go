@@ -70,18 +70,18 @@ func TestGetByCategoryID(t *testing.T) {
 
 func TestGetByUser(t *testing.T) {
 	t.Run("GetByUser | Valid", func(t *testing.T) {
-		contentRepository.On("GetByUser", ctx, model.User{}).Return([]*model.Content{}, nil).Once()
+		contentRepository.On("GetByUser", ctx).Return([]*model.Content{}, nil).Once()
 
-		result, err := contentService.GetByUser(ctx, model.User{})
+		result, err := contentService.GetByUser(ctx)
 
 		assert.NotNil(t, result)
 		assert.Nil(t, err)
 	})
 
 	t.Run("GetByUser | Invalid", func(t *testing.T) {
-		contentRepository.On("GetByUser", ctx, model.User{}).Return([]*model.Content{}, errors.New("whoops")).Once()
+		contentRepository.On("GetByUser", ctx).Return([]*model.Content{}, errors.New("whoops")).Once()
 
-		result, err := contentService.GetByUser(ctx, model.User{})
+		result, err := contentService.GetByUser(ctx)
 
 		assert.NotNil(t, result)
 		assert.NotNil(t, err)
@@ -90,18 +90,18 @@ func TestGetByUser(t *testing.T) {
 
 func TestCreate(t *testing.T) {
 	t.Run("Create | Valid", func(t *testing.T) {
-		contentRepository.On("Create", ctx, model.NewContent{}, model.User{}).Return(&model.Content{}, nil).Once()
+		contentRepository.On("Create", ctx, model.NewContent{}).Return(&model.Content{}, nil).Once()
 
-		result, err := contentService.Create(ctx, model.NewContent{}, model.User{})
+		result, err := contentService.Create(ctx, model.NewContent{})
 
 		assert.NotNil(t, result)
 		assert.Nil(t, err)
 	})
 
 	t.Run("Create | Invalid", func(t *testing.T) {
-		contentRepository.On("Create", ctx, model.NewContent{}, model.User{}).Return(&model.Content{}, errors.New("whoops")).Once()
+		contentRepository.On("Create", ctx, model.NewContent{}).Return(&model.Content{}, errors.New("whoops")).Once()
 
-		result, err := contentService.Create(ctx, model.NewContent{}, model.User{})
+		result, err := contentService.Create(ctx, model.NewContent{})
 
 		assert.NotNil(t, result)
 		assert.NotNil(t, err)
@@ -110,18 +110,18 @@ func TestCreate(t *testing.T) {
 
 func TestUpdate(t *testing.T) {
 	t.Run("Update | Valid", func(t *testing.T) {
-		contentRepository.On("Update", ctx, model.EditContent{}, model.User{}).Return(&model.Content{}, nil).Once()
+		contentRepository.On("Update", ctx, model.EditContent{}).Return(&model.Content{}, nil).Once()
 
-		result, err := contentService.Update(ctx, model.EditContent{}, model.User{})
+		result, err := contentService.Update(ctx, model.EditContent{})
 
 		assert.NotNil(t, result)
 		assert.Nil(t, err)
 	})
 
 	t.Run("Update | Invalid", func(t *testing.T) {
-		contentRepository.On("Update", ctx, model.EditContent{}, model.User{}).Return(&model.Content{}, errors.New("whoops")).Once()
+		contentRepository.On("Update", ctx, model.EditContent{}).Return(&model.Content{}, errors.New("whoops")).Once()
 
-		result, err := contentService.Update(ctx, model.EditContent{}, model.User{})
+		result, err := contentService.Update(ctx, model.EditContent{})
 
 		assert.NotNil(t, result)
 		assert.NotNil(t, err)
@@ -130,18 +130,18 @@ func TestUpdate(t *testing.T) {
 
 func TestDelete(t *testing.T) {
 	t.Run("Delete | Valid", func(t *testing.T) {
-		contentRepository.On("Delete", ctx, model.DeleteContent{}, model.User{}).Return(true, nil).Once()
+		contentRepository.On("Delete", ctx, model.DeleteContent{}).Return(true, nil).Once()
 
-		res, err := contentService.Delete(ctx, model.DeleteContent{}, model.User{})
+		res, err := contentService.Delete(ctx, model.DeleteContent{})
 
 		assert.True(t, res)
 		assert.Nil(t, err)
 	})
 
 	t.Run("Delete | Invalid", func(t *testing.T) {
-		contentRepository.On("Delete", ctx, model.DeleteContent{}, model.User{}).Return(false, errors.New("whoops")).Once()
+		contentRepository.On("Delete", ctx, model.DeleteContent{}).Return(false, errors.New("whoops")).Once()
 
-		res, err := contentService.Delete(ctx, model.DeleteContent{}, model.User{})
+		res, err := contentService.Delete(ctx, model.DeleteContent{})
 
 		assert.False(t, res)
 		assert.NotNil(t, err)

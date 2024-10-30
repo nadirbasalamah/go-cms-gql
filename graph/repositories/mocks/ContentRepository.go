@@ -14,9 +14,9 @@ type ContentRepository struct {
 	mock.Mock
 }
 
-// Create provides a mock function with given fields: ctx, input, user
-func (_m *ContentRepository) Create(ctx context.Context, input model.NewContent, user model.User) (*model.Content, error) {
-	ret := _m.Called(ctx, input, user)
+// Create provides a mock function with given fields: ctx, input
+func (_m *ContentRepository) Create(ctx context.Context, input model.NewContent) (*model.Content, error) {
+	ret := _m.Called(ctx, input)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Create")
@@ -24,19 +24,19 @@ func (_m *ContentRepository) Create(ctx context.Context, input model.NewContent,
 
 	var r0 *model.Content
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, model.NewContent, model.User) (*model.Content, error)); ok {
-		return rf(ctx, input, user)
+	if rf, ok := ret.Get(0).(func(context.Context, model.NewContent) (*model.Content, error)); ok {
+		return rf(ctx, input)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, model.NewContent, model.User) *model.Content); ok {
-		r0 = rf(ctx, input, user)
+	if rf, ok := ret.Get(0).(func(context.Context, model.NewContent) *model.Content); ok {
+		r0 = rf(ctx, input)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*model.Content)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, model.NewContent, model.User) error); ok {
-		r1 = rf(ctx, input, user)
+	if rf, ok := ret.Get(1).(func(context.Context, model.NewContent) error); ok {
+		r1 = rf(ctx, input)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -44,9 +44,9 @@ func (_m *ContentRepository) Create(ctx context.Context, input model.NewContent,
 	return r0, r1
 }
 
-// Delete provides a mock function with given fields: ctx, input, user
-func (_m *ContentRepository) Delete(ctx context.Context, input model.DeleteContent, user model.User) (bool, error) {
-	ret := _m.Called(ctx, input, user)
+// Delete provides a mock function with given fields: ctx, input
+func (_m *ContentRepository) Delete(ctx context.Context, input model.DeleteContent) (bool, error) {
+	ret := _m.Called(ctx, input)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Delete")
@@ -54,17 +54,17 @@ func (_m *ContentRepository) Delete(ctx context.Context, input model.DeleteConte
 
 	var r0 bool
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, model.DeleteContent, model.User) (bool, error)); ok {
-		return rf(ctx, input, user)
+	if rf, ok := ret.Get(0).(func(context.Context, model.DeleteContent) (bool, error)); ok {
+		return rf(ctx, input)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, model.DeleteContent, model.User) bool); ok {
-		r0 = rf(ctx, input, user)
+	if rf, ok := ret.Get(0).(func(context.Context, model.DeleteContent) bool); ok {
+		r0 = rf(ctx, input)
 	} else {
 		r0 = ret.Get(0).(bool)
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, model.DeleteContent, model.User) error); ok {
-		r1 = rf(ctx, input, user)
+	if rf, ok := ret.Get(1).(func(context.Context, model.DeleteContent) error); ok {
+		r1 = rf(ctx, input)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -162,9 +162,9 @@ func (_m *ContentRepository) GetByID(ctx context.Context, contentID string) (*mo
 	return r0, r1
 }
 
-// GetByUser provides a mock function with given fields: ctx, user
-func (_m *ContentRepository) GetByUser(ctx context.Context, user model.User) ([]*model.Content, error) {
-	ret := _m.Called(ctx, user)
+// GetByUser provides a mock function with given fields: ctx
+func (_m *ContentRepository) GetByUser(ctx context.Context) ([]*model.Content, error) {
+	ret := _m.Called(ctx)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetByUser")
@@ -172,19 +172,19 @@ func (_m *ContentRepository) GetByUser(ctx context.Context, user model.User) ([]
 
 	var r0 []*model.Content
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, model.User) ([]*model.Content, error)); ok {
-		return rf(ctx, user)
+	if rf, ok := ret.Get(0).(func(context.Context) ([]*model.Content, error)); ok {
+		return rf(ctx)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, model.User) []*model.Content); ok {
-		r0 = rf(ctx, user)
+	if rf, ok := ret.Get(0).(func(context.Context) []*model.Content); ok {
+		r0 = rf(ctx)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]*model.Content)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, model.User) error); ok {
-		r1 = rf(ctx, user)
+	if rf, ok := ret.Get(1).(func(context.Context) error); ok {
+		r1 = rf(ctx)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -192,9 +192,9 @@ func (_m *ContentRepository) GetByUser(ctx context.Context, user model.User) ([]
 	return r0, r1
 }
 
-// Update provides a mock function with given fields: ctx, input, user
-func (_m *ContentRepository) Update(ctx context.Context, input model.EditContent, user model.User) (*model.Content, error) {
-	ret := _m.Called(ctx, input, user)
+// Update provides a mock function with given fields: ctx, input
+func (_m *ContentRepository) Update(ctx context.Context, input model.EditContent) (*model.Content, error) {
+	ret := _m.Called(ctx, input)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Update")
@@ -202,19 +202,19 @@ func (_m *ContentRepository) Update(ctx context.Context, input model.EditContent
 
 	var r0 *model.Content
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, model.EditContent, model.User) (*model.Content, error)); ok {
-		return rf(ctx, input, user)
+	if rf, ok := ret.Get(0).(func(context.Context, model.EditContent) (*model.Content, error)); ok {
+		return rf(ctx, input)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, model.EditContent, model.User) *model.Content); ok {
-		r0 = rf(ctx, input, user)
+	if rf, ok := ret.Get(0).(func(context.Context, model.EditContent) *model.Content); ok {
+		r0 = rf(ctx, input)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*model.Content)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, model.EditContent, model.User) error); ok {
-		r1 = rf(ctx, input, user)
+	if rf, ok := ret.Get(1).(func(context.Context, model.EditContent) error); ok {
+		r1 = rf(ctx, input)
 	} else {
 		r1 = ret.Error(1)
 	}

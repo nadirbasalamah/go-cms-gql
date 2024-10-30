@@ -14,8 +14,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-type CategoryRepositoryImpl struct {
-}
+type CategoryRepositoryImpl struct{}
 
 const categoryCollection = utils.CATEGORY_COLLECTION
 
@@ -156,14 +155,36 @@ func (cr *CategoryRepositoryImpl) Delete(ctx context.Context, input model.Delete
 		{Key: "_id", Value: cID},
 	}
 
+	isUsed, err := isCategoryInUse(ctx, input.CategoryID)
+
+	if err != nil {
+		return false, err
+	}
+
+	if isUsed {
+		return false, errors.New("delete category failed, category is used")
+	}
+
 	var collection *mongo.Collection = database.GetCollection(categoryCollection)
 
 	result, err := collection.DeleteOne(ctx, query)
 	var isFailed bool = err != nil || result.DeletedCount < 1
 
 	if isFailed {
-		return !isFailed, errors.New("delete category failed")
+		return !isFailed, errors.New("delete category failed, category not found")
 	}
 
 	return true, nil
+}
+
+func isCategoryInUse(ctx context.Context, categoryID string) (bool, error) {
+	var query primitive.D = bson.D{{Key: "category._id", Value: categoryID}}
+	var collection *mongo.Collection = database.GetCollection(contentCollection)
+
+	count, err := collection.CountDocuments(ctx, query)
+	if err != nil {
+		return false, err
+	}
+
+	return count > 0, nil
 }

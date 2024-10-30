@@ -4,16 +4,17 @@ import (
 	"context"
 	"go-cms-gql/graph/model"
 	"go-cms-gql/graph/repositories"
-	"go-cms-gql/utils"
 )
 
 type UserServiceImpl struct {
-	repository repositories.UserRepository
+	repository     repositories.UserRepository
+	tokenGenerator func(userId string) (string, error)
 }
 
-func InitUserService(userRepository repositories.UserRepository) UserService {
+func InitUserService(userRepository repositories.UserRepository, tokenGenFunc func(userId string) (string, error)) UserService {
 	return &UserServiceImpl{
-		repository: userRepository,
+		repository:     userRepository,
+		tokenGenerator: tokenGenFunc,
 	}
 }
 
@@ -28,7 +29,7 @@ func (us *UserServiceImpl) Login(ctx context.Context, input model.LoginInput) (s
 		return "", err
 	}
 
-	token, err := utils.GenerateNewAccessToken(user.ID)
+	token, err := us.tokenGenerator(user.ID)
 
 	if err != nil {
 		return "", err

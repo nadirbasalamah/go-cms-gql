@@ -3,6 +3,7 @@ package graph
 import (
 	"go-cms-gql/graph/repositories"
 	"go-cms-gql/graph/services"
+	"go-cms-gql/utils"
 )
 
 type Resolver struct {
@@ -13,8 +14,13 @@ type Resolver struct {
 }
 
 func InitResolver() *Resolver {
+	tokenGenFunc := utils.GenerateNewAccessToken
+
 	return &Resolver{
-		userService:           services.InitUserService(repositories.InitUserRepository()),
+		userService: services.InitUserService(
+			repositories.InitUserRepository(),
+			tokenGenFunc,
+		),
 		categoryService:       services.InitCategoryService(repositories.InitCategoryRepository()),
 		contentService:        services.InitContentService(repositories.InitContentRepository()),
 		recommendationService: services.InitRecommendationService(),
