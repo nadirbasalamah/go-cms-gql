@@ -47,6 +47,15 @@ func Connect(dbName string) error {
 	return nil
 }
 
+func Disconnect(ctx context.Context) error {
+	if err := DB.Client.Disconnect(ctx); err != nil {
+		log.Fatalf("error when disconnecting the database: %v\n", err)
+		return err
+	}
+
+	return nil
+}
+
 func GetCollection(name string) *mongo.Collection {
 	return DB.Database.Collection(name)
 }
