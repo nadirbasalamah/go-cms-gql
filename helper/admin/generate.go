@@ -85,4 +85,6 @@ func generateAdmin(ctx context.Context, input model.NewUser) {
 	if err != nil || res.InsertedID == nil {
 		log.Fatalf("admin creation failed: %v\n", err)
 	}
+
+	log.Println("admin created successfully")
 }
