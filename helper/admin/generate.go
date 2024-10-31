@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"go-cms-gql/database"
+	"go-cms-gql/directives"
 	"go-cms-gql/graph/model"
 	"go-cms-gql/utils"
 	"log"
@@ -15,8 +16,15 @@ import (
 
 const userCollection = utils.USER_COLLECTION
 
+type adminRequest struct {
+	Username string `validate:"required,min=3,max=32"`
+	Email    string `validate:"required,email"`
+	Password string `validate:"required,min=8,containsNumber,containsSpecialCharacter"`
+}
+
 func main() {
 	connectToDB()
+	directives.InitValidator()
 
 	ctx := context.TODO()
 	input := model.NewUser{
@@ -36,7 +44,13 @@ func connectToDB() {
 }
 
 func generateAdmin(ctx context.Context, input model.NewUser) {
-	//TODO: add request validation
+	if err := directives.ValidateStruct(&adminRequest{
+		Username: input.Username,
+		Email:    input.Email,
+		Password: input.Password,
+	}); err != nil {
+		log.Fatalf("validation failed: %v\n", err)
+	}
 
 	bs, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
 	if err != nil {

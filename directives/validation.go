@@ -46,6 +46,19 @@ func ValidateRequest(ctx context.Context, obj interface{}, next graphql.Resolver
 	return next(ctx)
 }
 
+func ValidateStruct(data interface{}) error {
+	errorMessages := ""
+
+	if validationErr := validate.Struct(data); validationErr != nil {
+		for _, err := range validationErr.(validator.ValidationErrors) {
+			errorMessages += getErrorMessage(err.Field(), err)
+		}
+		return errors.New(errorMessages)
+	}
+
+	return nil
+}
+
 func getErrorMessage(fieldName string, err validator.FieldError) string {
 	switch err.Tag() {
 	case "required":
