@@ -1,0 +1,39 @@
+version: '3.7'
+
+services:
+  api-service:
+    build: .
+    container_name: api-service
+    environment:
+      - APP_MODE=${APP_MODE}
+      - DATABASE_NAME=${DATABASE_NAME}
+      - MONGO_URI=${MONGO_URI}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - JWT_SECRET_KEY_EXPIRE_MINUTES_COUNT=${JWT_SECRET_KEY_EXPIRE_MINUTES_COUNT}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_MODEL=${OPENAI_MODEL}
+    ports:
+      - 8080:8080
+    restart: on-failure
+    networks:
+      - my-network
+    depends_on:
+      - mongodb-service
+
+  mongodb-service:
+    image: mongo:latest
+    container_name: mongodb-service
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+      - MONGO_INITDB_DATABASE=${DATABASE_NAME}
+    ports:
+      - 27017
+    volumes:
+      - C:\Users\ASUS\Documents\gocmsgqlvolume:/data/db
+    networks:
+      - my-network
+
+networks:
+  my-network:
+    driver: bridge
