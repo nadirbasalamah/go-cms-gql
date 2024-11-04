@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"fmt"
 	"go-cms-gql/utils"
 	"log"
 
@@ -17,10 +18,27 @@ type MongoInstance struct {
 
 var DB MongoInstance
 
+var (
+	DB_PROTOCOL = utils.GetValue("DB_PROTOCOL")
+	DB_USER     = utils.GetValue("DB_USER")
+	DB_PASSWORD = utils.GetValue("DB_PASSWORD")
+	DB_HOST     = utils.GetValue("DB_HOST")
+	DB_OPTIONS  = utils.GetValue("DB_OPTIONS")
+)
+
 func Connect(dbName string) error {
 	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
 
-	opts := options.Client().ApplyURI(utils.GetValue("MONGO_URI")).SetServerAPIOptions(serverAPI)
+	uri := fmt.Sprintf(
+		"%s://%s:%s@%s/%s",
+		DB_PROTOCOL,
+		DB_USER,
+		DB_PASSWORD,
+		DB_HOST,
+		DB_OPTIONS,
+	)
+
+	opts := options.Client().ApplyURI(uri).SetServerAPIOptions(serverAPI)
 
 	// Create a new client and connect to the server
 	client, err := mongo.Connect(context.TODO(), opts)

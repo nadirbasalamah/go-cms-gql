@@ -1,5 +1,3 @@
-version: '3.7'
-
 services:
   api-service:
     build: .
@@ -7,7 +5,11 @@ services:
     environment:
       - APP_MODE=${APP_MODE}
       - DATABASE_NAME=${DATABASE_NAME}
-      - MONGO_URI=${MONGO_URI}
+      - DB_PROTOCOL=${DB_PROTOCOL}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=${DB_HOST}
+      - DB_OPTIONS=${DB_OPTIONS}
       - JWT_SECRET_KEY=${JWT_SECRET_KEY}
       - JWT_SECRET_KEY_EXPIRE_MINUTES_COUNT=${JWT_SECRET_KEY_EXPIRE_MINUTES_COUNT}
       - OPENAI_API_KEY=${OPENAI_API_KEY}
@@ -30,7 +32,7 @@ services:
     ports:
       - 27017
     volumes:
-      - C:\Users\ASUS\Documents\gocmsgqlvolume:/data/db
+      - ${APP_VOLUME}:/data/db
     networks:
       - my-network
 

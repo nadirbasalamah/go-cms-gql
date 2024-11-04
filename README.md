@@ -7,7 +7,7 @@ GraphQL application for managing contents. Written in Go with gqlgen.
 - Basic authentication.
 - Content management.
 - Generate content by topic, title and read duration.
-- Generate tags content.
+- Generate content tags.
 
 ## Tech Stack
 
@@ -28,7 +28,7 @@ GraphQL application for managing contents. Written in Go with gqlgen.
 cp .env.example .env
 ```
 
-3. Fill the configuration inside `.env` file.
+3. Fill the configuration inside `.env` file. For MongoDB cloud user, use `mongodb+srv` for `DB_PROTOCOL`.
 
 4. Generate the admin account.
 
@@ -46,7 +46,7 @@ go run server.go
 
 1. Make sure to set the `APP_MODE` in the `.env` into `production`.
 
-2. Adjust the `MONGO_URI` to use `mongdb-service` as the host.
+2. Adjust the `DB_HOST` to use `mongodb-service:27017` as the host and the `DB_PROTOCOL` to use `mongodb`.
 
 3. Fill the username and password in the `MONGO_INITDB_ROOT_USERNAME` and `MONGO_INITDB_ROOT_PASSWORD`.
 
