@@ -18,15 +18,15 @@ type MongoInstance struct {
 
 var DB MongoInstance
 
-var (
-	DB_PROTOCOL = utils.GetValue("DB_PROTOCOL")
-	DB_USER     = utils.GetValue("DB_USER")
-	DB_PASSWORD = utils.GetValue("DB_PASSWORD")
-	DB_HOST     = utils.GetValue("DB_HOST")
-	DB_OPTIONS  = utils.GetValue("DB_OPTIONS")
-)
-
 func Connect(dbName string) error {
+	var (
+		DB_PROTOCOL = utils.GetValue("DB_PROTOCOL")
+		DB_USER     = utils.GetValue("DB_USER")
+		DB_PASSWORD = utils.GetValue("DB_PASSWORD")
+		DB_HOST     = utils.GetValue("DB_HOST")
+		DB_OPTIONS  = utils.GetValue("DB_OPTIONS")
+	)
+
 	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
 
 	uri := fmt.Sprintf(
