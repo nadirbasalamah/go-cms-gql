@@ -7,6 +7,9 @@ import (
 	"go-cms-gql/graph/model"
 	"go-cms-gql/utils"
 	"log"
+	"os"
+	"os/exec"
+	"runtime"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -23,7 +26,6 @@ type adminRequest struct {
 }
 
 func main() {
-	connectToDB()
 	directives.InitValidator()
 
 	ctx := context.TODO()
@@ -33,7 +35,11 @@ func main() {
 		Password: utils.GetValue("ADMIN_PASSWORD"),
 	}
 
-	generateAdmin(ctx, input)
+	if os.Getenv("APP_MODE") != "production" {
+		createAdmin(ctx, input)
+	} else {
+		execInitAdmin(input)
+	}
 }
 
 func connectToDB() {
@@ -43,7 +49,9 @@ func connectToDB() {
 	}
 }
 
-func generateAdmin(ctx context.Context, input model.NewUser) {
+func createAdmin(ctx context.Context, input model.NewUser) {
+	connectToDB()
+
 	if err := directives.ValidateStruct(&adminRequest{
 		Username: input.Username,
 		Email:    input.Email,
@@ -85,6 +93,45 @@ func generateAdmin(ctx context.Context, input model.NewUser) {
 	if err != nil || res.InsertedID == nil {
 		log.Fatalf("admin creation failed: %v\n", err)
 	}
+
+	log.Println("admin created successfully")
+}
+
+func execInitAdmin(input model.NewUser) {
+	bs, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
+	if err != nil {
+		log.Fatalf("error occurred when creating password: %v\n", err)
+	}
+
+	var password string = string(bs)
+
+	mongoRootUsername := utils.GetValue("MONGO_INITDB_ROOT_USERNAME")
+	mongoRootPassword := utils.GetValue("MONGO_INITDB_ROOT_PASSWORD")
+	adminName := input.Username
+	adminEmail := input.Email
+	adminPassword := password
+
+	// Determine the appropriate command to execute the script based on OS
+	var cmd *exec.Cmd
+	if runtime.GOOS == "windows" {
+		// On Windows, use "bash" to execute the shell script
+		cmd = exec.Command("bash", "./init_admin.sh", mongoRootUsername, mongoRootPassword, adminName, adminEmail, adminPassword)
+	} else {
+		// On Unix-based systems, execute the init_admin directly
+		cmd = exec.Command("./init_admin.sh", mongoRootUsername, mongoRootPassword, adminName, adminEmail, adminPassword)
+	}
+
+	// Set the environment variables if needed
+	cmd.Env = os.Environ()
+
+	// Capture output and errors
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Fatalf("Script execution failed: %v\nOutput: %s", err, output)
+	}
+
+	// Print the output from the script
+	log.Printf("Script executed successfully:\n%s", output)
 
 	log.Println("admin created successfully")
 }

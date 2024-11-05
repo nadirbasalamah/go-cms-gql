@@ -53,7 +53,7 @@ go run server.go
 4. Generate the admin account.
 
 ```sh
-./init_admin.sh
+go run helper/admin/generate.go
 ```
 
 5. Run the application.
