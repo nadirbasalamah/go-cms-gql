@@ -50,16 +50,16 @@ go run server.go
 
 3. Fill the username and password in the `MONGO_INITDB_ROOT_USERNAME` and `MONGO_INITDB_ROOT_PASSWORD`.
 
-4. Generate the admin account.
-
-```sh
-go run helper/admin/generate.go
-```
-
-5. Run the application.
+4. Run the application.
 
 ```sh
 docker compose up -d
+```
+
+5. Generate the admin account.
+
+```sh
+go run helper/admin/generate.go
 ```
 
 6. Stop the application.
